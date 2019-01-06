@@ -90,41 +90,11 @@
         app:layout_constraintGuide_percent="0.36197916" />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="Longitude:"
-        android:textAlignment="textEnd"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="Latitude:"
-        android:textAlignment="textEnd"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <TextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Time:"
         android:textAlignment="textEnd"
@@ -132,33 +102,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <TextView
-        android:id="@+id/longitude_detail"
-        android:layout_width="0dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="TextView"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        tools:text="There is Longitude" />
-
-    <TextView
-        android:id="@+id/latitude_deatil"
-        android:layout_width="0dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="TextView"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        tools:text="There is Latitude" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
         android:id="@+id/time_detail"
