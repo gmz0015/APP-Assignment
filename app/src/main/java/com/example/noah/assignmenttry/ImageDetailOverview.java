@@ -1,7 +1,6 @@
 package com.example.noah.assignmenttry;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,15 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import pl.aprilapps.easyphotopicker.EasyImage;
-
-public class ImageDetail extends Fragment{
+public class ImageDetailOverview extends Fragment{
     OnImageDetailListener mCallback;
 
     private String image_path;
@@ -32,7 +28,7 @@ public class ImageDetail extends Fragment{
 
     private Fragment currentFragment;
 
-    public ImageDetail() {}
+    public ImageDetailOverview() {}
 
     /**
      *
@@ -44,8 +40,8 @@ public class ImageDetail extends Fragment{
      * @param time
      * @return
      */
-    public static ImageDetail newInstance(String path, String title, String description, Double longitude, Double latitude, String time) {
-        ImageDetail imageDetail = new ImageDetail();
+    public static ImageDetailOverview newInstance(String path, String title, String description, Double longitude, Double latitude, String time) {
+        ImageDetailOverview imageDetailOverview = new ImageDetailOverview();
         Bundle bundle = new Bundle();
         bundle.putString("Path", path);
         bundle.putString("Title", title);
@@ -53,8 +49,8 @@ public class ImageDetail extends Fragment{
         bundle.putDouble("Longitude", longitude);
         bundle.putDouble("Latitude", latitude);
         bundle.putString("Time", time);
-        imageDetail.setArguments(bundle);
-        return imageDetail;
+        imageDetailOverview.setArguments(bundle);
+        return imageDetailOverview;
     }
 
     @Nullable
@@ -89,8 +85,7 @@ public class ImageDetail extends Fragment{
             public void onClick(View v) {
                 ImageDetailPicPopup imageDetailPicPopup = ImageDetailPicPopup.newInstance(title, description, longitude, latitude, time);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//                fragmentTransaction.hide(currentFragment);
-                fragmentTransaction.addToBackStack("Image Detail Overview").add(R.id.container, imageDetailPicPopup, "Image Detail Info").commit();
+                fragmentTransaction.addToBackStack("Image Detail Overview").add(R.id.info, imageDetailPicPopup, "Image Detail Info").commit();
             }
         });
     }

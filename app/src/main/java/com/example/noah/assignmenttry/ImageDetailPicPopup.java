@@ -75,11 +75,12 @@ public class ImageDetailPicPopup extends Fragment implements OnMapReadyCallback 
         this.latitude = args.getDouble("Latitude");
         this.time = args.getString("Time");
 
-        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.MyDialogStyleBottom);
-        // clone the inflater using the ContextThemeWrapper
-        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-        View view = localInflater.inflate(R.layout.image_detail_info, container, false);
-//        inflater.inflate(R.layout.image_detail_info, container, false)
+//        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.MyDialogStyleBottom);
+////         clone the inflater using the ContextThemeWrapper
+//        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
+//        View view = localInflater.inflate(R.layout.image_detail_info, null, false);
+
+        View view = inflater.inflate(R.layout.image_detail_info, container, false);
 
         return view;
     }

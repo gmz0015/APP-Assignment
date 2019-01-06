@@ -1,12 +1,9 @@
 package com.example.noah.assignmenttry;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.noah.assignmenttry.database.ImageData;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImageViewHolder> {
@@ -70,7 +60,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
             @Override
             public void onClick(View v) {
                 ImageData current = mImages.get(position);
-                ImageDetail imageDetail = ImageDetail
+                ImageDetailOverview imageDetailOverview = ImageDetailOverview
                         .newInstance(current.getImagePath(),
                                 current.getTitle(),
                                 current.getDescription(),
@@ -78,7 +68,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
                                 current.getLatitide(),
                                 current.getTime());
                 if (mImageListAdapterListener != null) {
-                    mImageListAdapterListener.onImageListAdapterClick(imageDetail);
+                    mImageListAdapterListener.onImageListAdapterClick(imageDetailOverview);
                 }
             }
         });
@@ -105,7 +95,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
     // CallBack
     public interface imageListAdapterListener {
-        void onImageListAdapterClick(ImageDetail imageDetail);
+        void onImageListAdapterClick(ImageDetailOverview imageDetailOverview);
     }
 
     public void setOnImageListAdapterClickListener (imageListAdapterListener  imageListAdapterListener) {

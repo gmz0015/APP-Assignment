@@ -21,7 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 
-public class BaseActivity extends AppCompatActivity implements ImageDetail.OnImageDetailListener {
+public class BaseActivity extends AppCompatActivity implements ImageDetailOverview.OnImageDetailListener {
 
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 2987;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 7829;
@@ -92,13 +92,13 @@ public class BaseActivity extends AppCompatActivity implements ImageDetail.OnIma
 
     @Override
     public void onImageDetail(String path, String title, String description) {
-        ImageDetail imageDetail = new ImageDetail();
+        ImageDetailOverview imageDetailOverview = new ImageDetailOverview();
         Bundle args = new Bundle();
         args.putString("Path", path);
         args.putString("Title", title);
         args.putString("Description", description);
-        imageDetail.setArguments(args);
-        getSupportFragmentManager().beginTransaction().addToBackStack(null).add(R.id.container, imageDetail).commit();
+        imageDetailOverview.setArguments(args);
+        getSupportFragmentManager().beginTransaction().addToBackStack(null).add(R.id.container, imageDetailOverview).commit();
 
     }
 

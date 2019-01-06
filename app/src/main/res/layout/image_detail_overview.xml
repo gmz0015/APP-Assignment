@@ -36,5 +36,17 @@
         app:layout_constraintStart_toStartOf="parent"
         map:srcCompat="@android:drawable/ic_dialog_info" />
 
+    <FrameLayout
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="128dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
 
 </android.support.constraint.ConstraintLayout>

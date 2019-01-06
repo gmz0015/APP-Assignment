@@ -169,9 +169,9 @@ public class MapsFragment extends Fragment
 
         // Check if a click count was set, then display the click count.
         String title = marker.getTitle();
-        // The Callback for "ImageListAdapter" to invoke "ImageDetail"
+        // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
         ImageData current = mViewModel.getImageByTitle(title);
-        ImageDetail imageDetail = ImageDetail
+        ImageDetailOverview imageDetailOverview = ImageDetailOverview
                 .newInstance(current.getImagePath(),
                         current.getTitle(),
                         current.getDescription(),
@@ -180,7 +180,7 @@ public class MapsFragment extends Fragment
                         current.getTime());
         FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
         fragmentTransaction.hide(getFragment());
-        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetail, "Image Detail").commit();
+        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
