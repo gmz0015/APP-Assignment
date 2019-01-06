@@ -7,24 +7,18 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import pl.aprilapps.easyphotopicker.EasyImage;
 
-import org.w3c.dom.Text;
-
-public class ImageDetail extends Fragment implements OnMapReadyCallback {
+public class ImageDetail extends Fragment{
     OnImageDetailListener mCallback;
 
     private String image_path;
@@ -34,15 +28,20 @@ public class ImageDetail extends Fragment implements OnMapReadyCallback {
     private Double latitude;
     private String time;
 
-    private MapView mMapView;
-
     private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDhxfa-6SwMQ3bhnzxtWmG3UDOntkJhTcg";
+
+    private Fragment currentFragment;
 
     public ImageDetail() {}
 
     /**
      *
-     * @param imagePath
+     * @param path
+     * @param title
+     * @param description
+     * @param longitude
+     * @param latitude
+     * @param time
      * @return
      */
     public static ImageDetail newInstance(String path, String title, String description, Double longitude, Double latitude, String time) {
@@ -71,37 +70,29 @@ public class ImageDetail extends Fragment implements OnMapReadyCallback {
         this.longitude = args.getDouble("Longitude");
         this.latitude = args.getDouble("Latitude");
         this.time = args.getString("Time");
-        return inflater.inflate(R.layout.image_detail, container, false);
+        return inflater.inflate(R.layout.image_detail_overview, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ImageView imageView = getActivity().findViewById(R.id.image_detail);
-        TextView titleView = getActivity().findViewById(R.id.title_detail);
-        TextView desView = getActivity().findViewById(R.id.description_detail);
-        TextView timeView = getActivity().findViewById(R.id.time_detail);
+        this.currentFragment = this;
 
+        ImageView imageView = getActivity().findViewById(R.id.image_detail);
         Bitmap tempBitmap = BitmapFactory.decodeFile(image_path);
         imageView.setImageBitmap(tempBitmap);
-        titleView.setText(title);
-        desView.setText(description);
-        timeView.setText(time);
 
-//        setContentView(R.layout.activity_raw_map);
-
-        // *** IMPORTANT ***
-        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
-        // objects or sub-Bundles.
-        Bundle mapViewBundle = null;
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
-        }
-        mMapView = (MapView) getActivity().findViewById(R.id.mapView_detail);
-        mMapView.onCreate(mapViewBundle);
-
-        mMapView.getMapAsync(this);
+        FloatingActionButton fab_info = getActivity().findViewById(R.id.fab_info);
+        fab_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageDetailPicPopup imageDetailPicPopup = ImageDetailPicPopup.newInstance(title, description, longitude, latitude, time);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//                fragmentTransaction.hide(currentFragment);
+                fragmentTransaction.addToBackStack("Image Detail Overview").add(R.id.container, imageDetailPicPopup, "Image Detail Info").commit();
+            }
+        });
     }
 
     @Override
@@ -117,52 +108,5 @@ public class ImageDetail extends Fragment implements OnMapReadyCallback {
     // Container Activity must implement this interface
     public interface OnImageDetailListener {
         public void onImageDetail(String path, String title, String description);
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        LatLng appointLoc = new LatLng(latitude, longitude);
-
-        googleMap.addMarker(new MarkerOptions().position(appointLoc).title(title));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(appointLoc));
-        googleMap.setPadding(20,20,20,20); // Set unclickable
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMapView.onResume();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mMapView.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mMapView.onStop();
-    }
-
-
-
-    @Override
-    public void onPause() {
-        mMapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        mMapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mMapView.onLowMemory();
     }
 }
