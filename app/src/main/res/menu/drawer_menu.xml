@@ -9,13 +9,5 @@
             android:id="@+id/nav_map_view"
             android:icon="@drawable/ic_gallery_black_24dp"
             android:title="Map View" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_camera_alt_black_24dp"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_gallery_black_24dp"
-            android:title="Tools" />
     </group>
 </menu>
