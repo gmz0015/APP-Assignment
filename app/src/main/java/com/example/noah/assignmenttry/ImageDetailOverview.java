@@ -83,9 +83,11 @@ public class ImageDetailOverview extends Fragment{
         fab_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageDetailPicPopup imageDetailPicPopup = ImageDetailPicPopup.newInstance(title, description, longitude, latitude, time);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.addToBackStack("Image Detail Overview").add(R.id.info, imageDetailPicPopup, "Image Detail Info").commit();
+//                ImageDetailInfo imageDetailInfo = ImageDetailInfo.newInstance(title, description, longitude, latitude, time);
+//                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//                fragmentTransaction.addToBackStack("Image Detail Overview").add(R.id.info, imageDetailInfo, "Image Detail Info").commit();
+                ImageDetailInfo editNameDialog = new ImageDetailInfo(title, description, longitude, latitude, time);
+                editNameDialog.show(getFragmentManager(), "EditNameDialog");
             }
         });
     }

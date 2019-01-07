@@ -1,17 +1,16 @@
 package com.example.noah.assignmenttry;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.view.ContextThemeWrapper;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,7 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class ImageDetailPicPopup extends Fragment implements OnMapReadyCallback {
+public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallback {
 
     /* Instance Field */
     private String title;
@@ -34,31 +33,17 @@ public class ImageDetailPicPopup extends Fragment implements OnMapReadyCallback 
 
     private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDhxfa-6SwMQ3bhnzxtWmG3UDOntkJhTcg";
 
+    public ImageDetailInfo(){}
+
     /**
      * Default Constructor
      */
-    public ImageDetailPicPopup() {}
-
-    /**
-     * Save parameters
-     * @param title
-     * @param description
-     * @param longitude
-     * @param latitude
-     * @param time
-     * @return
-     */
-    public static ImageDetailPicPopup newInstance(String title, String description, Double longitude, Double latitude, String time) {
-        ImageDetailPicPopup imageDetailPicPopup = new ImageDetailPicPopup();
-        Bundle bundle = new Bundle();
-        bundle.putString("Title", title);
-        bundle.putString("Description", description);
-        bundle.putDouble("Longitude", longitude);
-        bundle.putDouble("Latitude", latitude);
-        bundle.putString("Time", time);
-        imageDetailPicPopup.setArguments(bundle);
-
-        return imageDetailPicPopup;
+    public ImageDetailInfo(String title, String description, Double longitude, Double latitude, String time) {
+        this.title = title;
+        this.description = description;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.time = time;
     }
 
     @Nullable
@@ -66,32 +51,29 @@ public class ImageDetailPicPopup extends Fragment implements OnMapReadyCallback 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = new Bundle();
-        args = getArguments();
-
-        this.title = args.getString("Title");
-        this.description = args.getString("Description");
-        this.longitude = args.getDouble("Longitude");
-        this.latitude = args.getDouble("Latitude");
-        this.time = args.getString("Time");
 
 //        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.MyDialogStyleBottom);
 ////         clone the inflater using the ContextThemeWrapper
 //        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
 //        View view = localInflater.inflate(R.layout.image_detail_info, null, false);
 
-        View view = inflater.inflate(R.layout.image_detail_info, container, false);
+        View view = inflater.inflate(R.layout.image_detail_info, container);
 
         return view;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.image_detail_info, null);
 
-        TextView titleView = getActivity().findViewById(R.id.title_detail);
-        TextView desView = getActivity().findViewById(R.id.description_detail);
-        TextView timeView = getActivity().findViewById(R.id.time_detail);
+        TextView titleView = view.findViewById(R.id.title_detail);
+        TextView desView = view.findViewById(R.id.description_detail);
+        TextView timeView = view.findViewById(R.id.time_detail);
+        mMapView = (MapView) view.findViewById(R.id.mapView_detail);
         titleView.setText(title);
         desView.setText(description);
         timeView.setText(time);
@@ -101,11 +83,23 @@ public class ImageDetailPicPopup extends Fragment implements OnMapReadyCallback 
         // *** IMPORTANT ***
         // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
         // objects or sub-Bundles.
+
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(view).setNegativeButton("Back", null);
+        return builder.create();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
-        mMapView = (MapView) getActivity().findViewById(R.id.mapView_detail);
+
         mMapView.onCreate(mapViewBundle);
 
         mMapView.getMapAsync(this);
