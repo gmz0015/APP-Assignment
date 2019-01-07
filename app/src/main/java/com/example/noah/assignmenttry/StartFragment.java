@@ -87,13 +87,13 @@ public class StartFragment extends Fragment {
             }
         });
 
-        // The Callback for "ImageListAdapter" to invoke "ImageDetail"
+        // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
         myAdapter.setOnImageListAdapterClickListener (new ImageListAdapter.imageListAdapterListener(){
             @Override
-            public void onImageListAdapterClick(ImageDetail imageDetail){
+            public void onImageListAdapterClick(ImageDetailOverview imageDetailOverview){
                 FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
                 fragmentTransaction.hide(getFragment());
-                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, imageDetail, "Image Detail").commit();
+                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
             }
         });
     }

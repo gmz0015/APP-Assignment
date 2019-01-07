@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.noah.assignmenttry.database.ImageData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -94,6 +95,7 @@ public class MapsFragment extends Fragment
                     MapsFragment.getMap().addMarker(new MarkerOptions().position(new
                                 LatLng(mLat, mLon))
                                 .title(imageData.getTitle()));
+                    MapsFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10));
                 }
             }
         });
@@ -132,6 +134,7 @@ public class MapsFragment extends Fragment
 
 //    private List<ImageData> imageDataList;
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker in Sydney, Australia,
@@ -142,6 +145,7 @@ public class MapsFragment extends Fragment
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         mMap.setOnMarkerClickListener(this);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(AUSTRALIA.getCenter(), 10));
     }
 
     @Override
@@ -165,9 +169,9 @@ public class MapsFragment extends Fragment
 
         // Check if a click count was set, then display the click count.
         String title = marker.getTitle();
-        // The Callback for "ImageListAdapter" to invoke "ImageDetail"
+        // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
         ImageData current = mViewModel.getImageByTitle(title);
-        ImageDetail imageDetail = ImageDetail
+        ImageDetailOverview imageDetailOverview = ImageDetailOverview
                 .newInstance(current.getImagePath(),
                         current.getTitle(),
                         current.getDescription(),
@@ -176,7 +180,7 @@ public class MapsFragment extends Fragment
                         current.getTime());
         FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
         fragmentTransaction.hide(getFragment());
-        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetail, "Image Detail").commit();
+        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the

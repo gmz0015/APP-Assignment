@@ -1,23 +1,19 @@
 package com.example.noah.assignmenttry;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-public class ImageDetail extends Fragment {
+public class ImageDetailOverview extends Fragment{
     OnImageDetailListener mCallback;
 
     private String image_path;
@@ -27,15 +23,24 @@ public class ImageDetail extends Fragment {
     private Double latitude;
     private String time;
 
-    public ImageDetail() {}
+    private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDhxfa-6SwMQ3bhnzxtWmG3UDOntkJhTcg";
+
+    private Fragment currentFragment;
+
+    public ImageDetailOverview() {}
 
     /**
      *
-     * @param imagePath
+     * @param path
+     * @param title
+     * @param description
+     * @param longitude
+     * @param latitude
+     * @param time
      * @return
      */
-    public static ImageDetail newInstance(String path, String title, String description, Double longitude, Double latitude, String time) {
-        ImageDetail imageDetail = new ImageDetail();
+    public static ImageDetailOverview newInstance(String path, String title, String description, Double longitude, Double latitude, String time) {
+        ImageDetailOverview imageDetailOverview = new ImageDetailOverview();
         Bundle bundle = new Bundle();
         bundle.putString("Path", path);
         bundle.putString("Title", title);
@@ -43,8 +48,8 @@ public class ImageDetail extends Fragment {
         bundle.putDouble("Longitude", longitude);
         bundle.putDouble("Latitude", latitude);
         bundle.putString("Time", time);
-        imageDetail.setArguments(bundle);
-        return imageDetail;
+        imageDetailOverview.setArguments(bundle);
+        return imageDetailOverview;
     }
 
     @Nullable
@@ -60,28 +65,27 @@ public class ImageDetail extends Fragment {
         this.longitude = args.getDouble("Longitude");
         this.latitude = args.getDouble("Latitude");
         this.time = args.getString("Time");
-        return inflater.inflate(R.layout.image_detail, container, false);
+        return inflater.inflate(R.layout.image_detail_overview, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ImageView imageView = getActivity().findViewById(R.id.image_detail);
-        TextView titleView = getActivity().findViewById(R.id.title_detail);
-        TextView desView = getActivity().findViewById(R.id.description_detail);
-        TextView lonView = getActivity().findViewById(R.id.longitude_detail);
-        TextView latView = getActivity().findViewById(R.id.latitude_deatil);
-        TextView timeView = getActivity().findViewById(R.id.time_detail);
+        this.currentFragment = this;
 
+        ImageView imageView = getActivity().findViewById(R.id.image_detail);
         Bitmap tempBitmap = BitmapFactory.decodeFile(image_path);
         imageView.setImageBitmap(tempBitmap);
-        titleView.setText(title);
-        desView.setText(description);
-        lonView.setText(String.valueOf(longitude));
-        latView.setText(String.valueOf(latitude));
-        timeView.setText(time);
 
+        FloatingActionButton fab_info = getActivity().findViewById(R.id.fab_info);
+        fab_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageDetailInfo imageDetailInfo = ImageDetailInfo.newInstance(title, description, longitude, latitude, time);
+                imageDetailInfo.show(getFragmentManager(), "Image Detail Info Dialog");
+            }
+        });
     }
 
     @Override
