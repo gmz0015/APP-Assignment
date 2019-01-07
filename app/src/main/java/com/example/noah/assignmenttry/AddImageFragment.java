@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,6 +41,9 @@ public class AddImageFragment extends Fragment {
     private ImageView imagePath_add;
     private EditText title_input;
     private EditText description_input;
+    private TextView longitude;
+    private TextView latitude;
+    private TextView time;
     private BaseViewModel mViewModel;
 
     private static GoogleMap mMap;
@@ -57,7 +61,6 @@ public class AddImageFragment extends Fragment {
     }
 
     /**
-     *
      * @param imagePath
      * @return
      */
@@ -72,36 +75,29 @@ public class AddImageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.add_new_image, container, false);
+
+        View view = inflater.inflate(R.layout.add_new_image, container, false);
+
+        // Set th handle of component
+        longitude= view.findViewById(R.id.new_lon);
+        latitude = view.findViewById(R.id.new_lat);
+        time = view.findViewById(R.id.new_time);
+        imagePath_add = view.findViewById(R.id.imageView_add);
+        title_input = view.findViewById(R.id.title_input);
+        description_input = view.findViewById(R.id.description_input);
+
+        return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        Bundle bundle = getArguments();
-        if (bundle != null)
-            image_path = bundle.getString(PATH); // Image Path
-
-        mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-
-        // get the handle of imageView.
-        imagePath_add = getActivity().findViewById(R.id.imageView_add);
-
-        //get the handld of the title and description.
-        title_input = getActivity().findViewById(R.id.title_input);
-        description_input = getActivity().findViewById(R.id.description_input);
-
-        Bitmap imageBitmap = BitmapFactory.decodeFile(image_path);
-        imagePath_add.setImageBitmap(imageBitmap);
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
@@ -126,15 +122,9 @@ public class AddImageFragment extends Fragment {
 
             return;
         }
-
-//        startLocationUpdates();
-
-        final Button button_get_location = getActivity().findViewById(R.id.button_get_location);
-        button_get_location.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("MissingPermission")
-            public void onClick(View view) {
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
@@ -143,21 +133,24 @@ public class AddImageFragment extends Fragment {
                             mCurrentLocation = location;
                             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                             Log.i("MAP", "new location " + mCurrentLocation.toString() + "new location time " + mLastUpdateTime);
-                            EditText lon = getActivity().findViewById(R.id.new_lon);
-                            TextView lat = getActivity().findViewById(R.id.new_lat);
-                            TextView time = getActivity().findViewById(R.id.new_time);
-
-                            lon.setText(String.valueOf(mCurrentLocation.getLongitude()));
-                            lat.setText(String.valueOf(mCurrentLocation.getLatitude()));
+                            longitude.setText(String.valueOf(mCurrentLocation.getLongitude()));
+                            latitude.setText(String.valueOf(mCurrentLocation.getLatitude()));
                             time.setText(mLastUpdateTime);
-                        }else {
+                        } else {
                             Log.i("MAP WRRONG", "Not get Current Location");
                         }
                     }
                 });
 
-            }
-        });
+        Bundle bundle = getArguments();
+        if (bundle != null)
+            image_path = bundle.getString(PATH); // Image Path
+
+        mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
+
+
+        Bitmap imageBitmap = BitmapFactory.decodeFile(image_path);
+        imagePath_add.setImageBitmap(imageBitmap);
 
         final Button button = getActivity().findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener() {

@@ -1,8 +1,6 @@
 package com.example.noah.assignmenttry;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -80,9 +78,6 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         this.latitude = args.getDouble("Latitude");
         this.time = args.getString("Time");
 
-        Log.i("ImageDetailInfo", "Saved title: " + title);
-        Log.i("ImageDetailInfo", "Saved longitidu: " + longitude);
-
         View view = inflater.inflate(R.layout.image_detail_info, container);
 
         return view;
@@ -96,10 +91,13 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.image_detail_info, null);
 
+        // Set the handle of the title, description, time and mapVIew.
         titleView = view.findViewById(R.id.title_detail);
         desView = view.findViewById(R.id.description_detail);
         timeView = view.findViewById(R.id.time_detail);
         mMapView = (MapView) view.findViewById(R.id.mapView_detail);
+
+        mMapView.getMapAsync(this);
 
         builder.setView(view).setNegativeButton("Back", null);
         return builder.create();
@@ -120,7 +118,6 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         mMapView.onCreate(mapViewBundle);
 
-        mMapView.getMapAsync(this);
     }
 
 
@@ -130,6 +127,7 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         googleMap.addMarker(new MarkerOptions().position(appointLoc).title(title));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(appointLoc));
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
 //        googleMap.setPadding(20,20,20,20); // Set unclickable
     }
 

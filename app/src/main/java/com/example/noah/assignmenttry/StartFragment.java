@@ -3,13 +3,17 @@ package com.example.noah.assignmenttry;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,16 +24,23 @@ import android.view.ViewGroup;
 import com.example.noah.assignmenttry.database.ImageData;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+
+import static android.app.Activity.RESULT_OK;
 
 public class StartFragment extends Fragment {
 
     private BaseViewModel mViewModel;
     private FragmentManager mfragManager;
     private ImageListAdapter myAdapter;
+
+    static final int REQUEST_TAKE_PHOTO = 1;
 
     public static StartFragment newInstance() {
         return new StartFragment();
@@ -52,6 +63,7 @@ public class StartFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i("StartFragment", "onActivityCreated()");
+
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
         myAdapter = new ImageListAdapter(getActivity().getApplicationContext());
 
@@ -83,7 +95,27 @@ public class StartFragment extends Fragment {
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyImage.openCamera(StartFragment.this, 0); // Important
+//                EasyImage.openCamera(StartFragment.this, 0); // Important
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Ensure that there's a camera activity to handle the intent
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                        Log.i("StartFragment", "photoFile is: " + photoFile);
+                    } catch (IOException ex) {
+                        // Error occurred while creating the File
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                                "com.example.android.fileprovider",
+                                photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                    }
+                }
             }
         });
 
@@ -109,6 +141,10 @@ public class StartFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            // Nothing need to do
+        }
+
         EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new DefaultCallback() {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
@@ -130,6 +166,24 @@ public class StartFragment extends Fragment {
                 }
             }
         });
+    }
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     /**
