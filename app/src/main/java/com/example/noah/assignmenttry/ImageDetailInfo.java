@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,21 +30,39 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
     private Double latitude;
     private String time;
 
+    private TextView titleView;
+    private TextView desView;
+    private TextView timeView;
     private MapView mMapView;
 
-    private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDhxfa-6SwMQ3bhnzxtWmG3UDOntkJhTcg";
 
-    public ImageDetailInfo(){}
+    private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDhxfa-6SwMQ3bhnzxtWmG3UDOntkJhTcg";
 
     /**
      * Default Constructor
      */
-    public ImageDetailInfo(String title, String description, Double longitude, Double latitude, String time) {
-        this.title = title;
-        this.description = description;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.time = time;
+    public ImageDetailInfo(){}
+
+    /**
+     *
+     * @param title
+     * @param description
+     * @param longitude
+     * @param latitude
+     * @param time
+     * @return
+     */
+    public static ImageDetailInfo newInstance(String title, String description, Double longitude, Double latitude, String time) {
+        ImageDetailInfo imageDeatilInfo = new ImageDetailInfo();
+        Bundle bundle = new Bundle();
+        bundle.putString("Title", title);
+        bundle.putString("Description", description);
+        bundle.putDouble("Longitude", longitude);
+        bundle.putDouble("Latitude", latitude);
+        bundle.putString("Time", time);
+        imageDeatilInfo.setArguments(bundle);
+
+        return imageDeatilInfo;
     }
 
     @Nullable
@@ -52,10 +71,17 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
                              @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.MyDialogStyleBottom);
-////         clone the inflater using the ContextThemeWrapper
-//        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-//        View view = localInflater.inflate(R.layout.image_detail_info, null, false);
+        Bundle args = new Bundle();
+        args = getArguments();
+
+        this.title = args.getString("Title");
+        this.description = args.getString("Description");
+        this.longitude = args.getDouble("Longitude");
+        this.latitude = args.getDouble("Latitude");
+        this.time = args.getString("Time");
+
+        Log.i("ImageDetailInfo", "Saved title: " + title);
+        Log.i("ImageDetailInfo", "Saved longitidu: " + longitude);
 
         View view = inflater.inflate(R.layout.image_detail_info, container);
 
@@ -70,23 +96,11 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.image_detail_info, null);
 
-        TextView titleView = view.findViewById(R.id.title_detail);
-        TextView desView = view.findViewById(R.id.description_detail);
-        TextView timeView = view.findViewById(R.id.time_detail);
+        titleView = view.findViewById(R.id.title_detail);
+        desView = view.findViewById(R.id.description_detail);
+        timeView = view.findViewById(R.id.time_detail);
         mMapView = (MapView) view.findViewById(R.id.mapView_detail);
-        titleView.setText(title);
-        desView.setText(description);
-        timeView.setText(time);
 
-//        setContentView(R.layout.activity_raw_map);
-
-        // *** IMPORTANT ***
-        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
-        // objects or sub-Bundles.
-
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
         builder.setView(view).setNegativeButton("Back", null);
         return builder.create();
     }
@@ -94,6 +108,10 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        titleView.setText(title);
+        desView.setText(description);
+        timeView.setText(time);
 
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
@@ -112,7 +130,7 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         googleMap.addMarker(new MarkerOptions().position(appointLoc).title(title));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(appointLoc));
-        googleMap.setPadding(20,20,20,20); // Set unclickable
+//        googleMap.setPadding(20,20,20,20); // Set unclickable
     }
 
     @Override
