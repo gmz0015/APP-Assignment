@@ -1,38 +1,39 @@
 package com.example.noah.assignmenttry;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.noah.assignmenttry.database.ImageData;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
-
-import static android.app.Activity.RESULT_OK;
 
 public class StartFragment extends Fragment {
 
@@ -40,17 +41,37 @@ public class StartFragment extends Fragment {
     private FragmentManager mfragManager;
     private ImageListAdapter myAdapter;
 
-    static final int REQUEST_TAKE_PHOTO = 1;
+    private Activity mActivity;
 
     public static StartFragment newInstance() {
         return new StartFragment();
     }
 
     @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mActivity = (Activity)context;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // get the handle of parent fragment
         mfragManager = getFragmentManager();
+
+        setHasOptionsMenu(true);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.e("StartFragment", "onCreateOptionsMenu()");
+        ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        menu.clear();
+        inflater.inflate(R.menu.child_menu, menu);
+    }
+
 
     @Nullable
     @Override
@@ -65,12 +86,12 @@ public class StartFragment extends Fragment {
         Log.i("StartFragment", "onActivityCreated()");
 
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-        myAdapter = new ImageListAdapter(getActivity().getApplicationContext());
+        myAdapter = new ImageListAdapter(mActivity.getApplicationContext());
 
         int numberOfColumns = 4;
-        RecyclerView myrecyclerView = getActivity().findViewById(R.id.recyclerview);
+        RecyclerView myrecyclerView = mActivity.findViewById(R.id.recyclerview);
         myrecyclerView.setAdapter(myAdapter);
-        myrecyclerView.setLayoutManager(new GridLayoutManager(getActivity().getApplicationContext(), numberOfColumns));
+        myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
 
         mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
             @Override
@@ -80,8 +101,6 @@ public class StartFragment extends Fragment {
                 myAdapter.setImages(images);
             }
         });
-
-        initEasyImage();
 
         FloatingActionButton fab_gallery = getActivity().findViewById(R.id.fab_gallery);
         fab_gallery.setOnClickListener(new View.OnClickListener() {
@@ -95,27 +114,7 @@ public class StartFragment extends Fragment {
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                EasyImage.openCamera(StartFragment.this, 0); // Important
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    // Create the File where the photo should go
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                        Log.i("StartFragment", "photoFile is: " + photoFile);
-                    } catch (IOException ex) {
-                        // Error occurred while creating the File
-                    }
-                    // Continue only if the File was successfully created
-                    if (photoFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                                "com.example.android.fileprovider",
-                                photoFile);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                    }
-                }
+                EasyImage.openCamera(StartFragment.this, 0); // Important
             }
         });
 
@@ -124,26 +123,61 @@ public class StartFragment extends Fragment {
             @Override
             public void onImageListAdapterClick(ImageDetailOverview imageDetailOverview){
                 FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
+//                getFragment().onPause();
                 fragmentTransaction.hide(getFragment());
                 fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
             }
         });
     }
 
-    private void initEasyImage() {
-        EasyImage.configuration(getContext())
-                .setImagesFolderName("EasyImage sample")
-                .setCopyTakenPhotosToPublicGalleryAppFolder(true)
-                .setCopyPickedImagesToPublicGalleryAppFolder(false)
-                .setAllowMultiplePickInGallery(true);
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i("StartFragment", "onStart()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("StartFragment", "onResume()");
+    }
+
+    /**
+     * Check to see which action the user selected.
+     * If the method does not recognize the user's action, it invokes the superclass method
+     *
+     * @param item
+     * @return
+     */
+//    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("BaseActivity", "item is " + item);
+        Log.i("BaseActivity", "item title is " + item.getTitle());
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_favorite:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
+
+            case android.R.id.home:
+                DrawerLayout mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            // Nothing need to do
-        }
 
         EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new DefaultCallback() {
             @Override
@@ -168,31 +202,14 @@ public class StartFragment extends Fragment {
         });
     }
 
-    String mCurrentPhotoPath;
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
     /**
      * add to the grid
      * @param returnedPhotos
      */
     private void onPhotosReturned(List<File> returnedPhotos) {
         for (File file: returnedPhotos) {
-            AddImageFragment addImageFragment = AddImageFragment.newInstance(file.getAbsolutePath());
+            AddImageFragment addImageFragment = new AddImageFragment();
+            addImageFragment.setImage(file.getAbsolutePath());
             FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
             fragmentTransaction.hide(getFragment());
             fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, addImageFragment, "Add Image").commit();

@@ -60,13 +60,13 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
             @Override
             public void onClick(View v) {
                 ImageData current = mImages.get(position);
-                ImageDetailOverview imageDetailOverview = ImageDetailOverview
-                        .newInstance(current.getImagePath(),
-                                current.getTitle(),
-                                current.getDescription(),
-                                current.getLongitude(),
-                                current.getLatitide(),
-                                current.getTime());
+                ImageDetailOverview imageDetailOverview = new ImageDetailOverview();
+                imageDetailOverview.setImageDetail(current.getImagePath(),
+                        current.getTitle(),
+                        current.getDescription(),
+                        current.getLongitude(),
+                        current.getLatitide(),
+                        current.getTime());
                 if (mImageListAdapterListener != null) {
                     mImageListAdapterListener.onImageListAdapterClick(imageDetailOverview);
                 }

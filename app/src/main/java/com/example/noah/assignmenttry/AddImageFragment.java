@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -53,23 +53,16 @@ public class AddImageFragment extends Fragment {
     private String mLastUpdateTime;
     private LocationCallback mLocationCallback;
 
-    private String image_path;
-    public static final String PATH = "Image Path";
+    private String imagePath;
+    public static final String FILE = "Image File";
     private static final int ACCESS_FINE_LOCATION = 123;
 
     public AddImageFragment() {
     }
 
-    /**
-     * @param imagePath
-     * @return
-     */
-    public static AddImageFragment newInstance(String imagePath) {
-        AddImageFragment addImageFragment = new AddImageFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(PATH, imagePath);
-        addImageFragment.setArguments(bundle);
-        return addImageFragment;
+    public boolean setImage(String imagePath){
+        this.imagePath = imagePath;
+        return true;
     }
 
     @Override
@@ -142,15 +135,34 @@ public class AddImageFragment extends Fragment {
                     }
                 });
 
-        Bundle bundle = getArguments();
-        if (bundle != null)
-            image_path = bundle.getString(PATH); // Image Path
-
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
 
 
-        Bitmap imageBitmap = BitmapFactory.decodeFile(image_path);
-        imagePath_add.setImageBitmap(imageBitmap);
+        // Get the dimensions of the View
+        int targetW = imagePath_add.getWidth();
+        int targetH = imagePath_add.getHeight();
+
+        // Get the dimensions of the bitmap
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(imagePath);
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+//        // Determine how much to scale down the image
+//        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+//
+//        // Decode the image file into a Bitmap sized to fill the View
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//        bmOptions.inPurgeable = true;
+//
+//        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
+//        imagePath_add.setImageBitmap(bitmap);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+        imagePath_add.setImageBitmap(bitmap);
+
 
         final Button button = getActivity().findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +176,7 @@ public class AddImageFragment extends Fragment {
                 } else {
                     String title = title_input.getText().toString();
                     String description = description_input.getText().toString();
-                    ImageData image = new ImageData(image_path,
+                    ImageData image = new ImageData(imagePath,
                             title,
                             description,
                             mCurrentLocation.getLongitude(),

@@ -3,7 +3,6 @@ package com.example.noah.assignmenttry.database;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.location.Location;
 import android.support.annotation.NonNull;
 
 import java.io.File;
@@ -13,22 +12,22 @@ import java.io.File;
 public class ImageData {
     @PrimaryKey
     @NonNull
-    public String imagePath;
+    private String imagePath;
 
     @ColumnInfo(name = "title")
-    public String title;
+    private String title;
 
     @ColumnInfo(name = "description")
-    public String description;
+    private String description;
 
     @ColumnInfo(name = "longitude")
-    public Double longitude;
+    private Double longitude;
 
     @ColumnInfo(name = "latitude")
-    public Double latitide;
+    private Double latitide;
 
     @ColumnInfo(name = "time")
-    public String time;
+    private String time;
 
     public ImageData (String imagePath, String title, String description, Double longitude, Double latitide, String time) {
         this.imagePath = imagePath;
