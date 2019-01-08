@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,8 +13,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -44,10 +48,16 @@ public class MapsFragment extends Fragment
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
     private static GoogleMap mMap;
-    static Activity activity;
+    static Activity mActivity;
 
     public static MapsFragment newInstance() {
         return new MapsFragment();
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mActivity = (Activity)context;
     }
 
     @Override
@@ -55,6 +65,7 @@ public class MapsFragment extends Fragment
         super.onCreate(savedInstanceState);
         Log.i("MapsFragment", "onCreate()");
         mfragManager = getFragmentManager();
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -99,6 +110,40 @@ public class MapsFragment extends Fragment
                 }
             }
         });
+    }
+
+    /**
+     * Check to see which action the user selected.
+     * If the method does not recognize the user's action, it invokes the superclass method
+     *
+     * @param item
+     * @return
+     */
+//    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("BaseActivity", "item is " + item);
+        Log.i("BaseActivity", "item title is " + item.getTitle());
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_favorite:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
+
+            case android.R.id.home:
+                DrawerLayout mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override
@@ -171,13 +216,13 @@ public class MapsFragment extends Fragment
         String title = marker.getTitle();
         // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
         ImageData current = mViewModel.getImageByTitle(title);
-        ImageDetailOverview imageDetailOverview = ImageDetailOverview
-                .newInstance(current.getImagePath(),
-                        current.getTitle(),
-                        current.getDescription(),
-                        current.getLongitude(),
-                        current.getLatitide(),
-                        current.getTime());
+        ImageDetailOverview imageDetailOverview = new ImageDetailOverview();
+        imageDetailOverview.setImageDetail(current.getImagePath(),
+                current.getTitle(),
+                current.getDescription(),
+                current.getLongitude(),
+                current.getLatitide(),
+                current.getTime());
         FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
         fragmentTransaction.hide(getFragment());
         fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
@@ -189,10 +234,6 @@ public class MapsFragment extends Fragment
     }
 
     private Fragment getFragment() { return this;}
-
-    public static void setActivity(Activity activity) {
-        MapsFragment.activity = activity;
-    }
 
     public static GoogleMap getMap() { return mMap; }
 
