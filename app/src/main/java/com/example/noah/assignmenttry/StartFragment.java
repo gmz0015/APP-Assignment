@@ -13,11 +13,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -62,14 +64,6 @@ public class StartFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.e("StartFragment", "onCreateOptionsMenu()");
-        ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        menu.clear();
-        inflater.inflate(R.menu.child_menu, menu);
-    }
 
 
     @Nullable
@@ -79,15 +73,19 @@ public class StartFragment extends Fragment {
         return inflater.inflate(R.layout.start_fragment, container, false);
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i("StartFragment", "onActivityCreated()");
 
+        // The number of items within a row
+        int numberOfColumns = 4;
+
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
         myAdapter = new ImageListAdapter(mActivity.getApplicationContext());
 
-        int numberOfColumns = 4;
+
         RecyclerView myrecyclerView = mActivity.findViewById(R.id.recyclerview);
         myrecyclerView.setAdapter(myAdapter);
         myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
@@ -95,12 +93,14 @@ public class StartFragment extends Fragment {
         mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
             @Override
             public void onChanged(@Nullable final List<ImageData> images) {
-                // Update the cached copy of the words in the adapter.
+                // Update the cached copy of the images in the adapter.
                 Log.i("StartFragment", "Observer onChanged()");
                 myAdapter.setImages(images);
             }
         });
 
+
+        // Set FloatingActionButton for access to gallery
         FloatingActionButton fab_gallery = getActivity().findViewById(R.id.fab_gallery);
         fab_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +109,8 @@ public class StartFragment extends Fragment {
             }
         });
 
+
+        // Set FloatingActionButton for access to gallery
         FloatingActionButton fab_camera = getActivity().findViewById(R.id.fab_camera);
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,17 +119,18 @@ public class StartFragment extends Fragment {
             }
         });
 
+
         // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
         myAdapter.setOnImageListAdapterClickListener (new ImageListAdapter.imageListAdapterListener(){
             @Override
             public void onImageListAdapterClick(ImageDetailOverview imageDetailOverview){
                 FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
-//                getFragment().onPause();
                 fragmentTransaction.hide(getFragment());
                 fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
             }
         });
     }
+
 
     @Override
     public void onStart() {
@@ -135,17 +138,119 @@ public class StartFragment extends Fragment {
         Log.i("StartFragment", "onStart()");
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         Log.i("StartFragment", "onResume()");
     }
 
+
+    /**
+     * Set toolbar
+     *
+     * @param menu
+     * @param inflater
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.i("StartFragment", "onCreateOptionsMenu()");
+
+        // Clear the previous menu
+        menu.clear();
+
+        // Inflate the menu with main_menu.xml
+        inflater.inflate(R.menu.main_menu, menu);
+
+        ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView =
+                (SearchView) searchItem.getActionView();
+        // Get the MenuItem for the action item
+        MenuItem actionMenuItem = menu.findItem(R.id.action_search);
+
+        // Assign the listener to that action item
+        MenuItemCompat.setOnActionExpandListener(actionMenuItem, new MenuItemCompat.OnActionExpandListener() {
+            // Define the listener
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.i("StartFragment", "Menu Collapse");
+
+                // Restore the adapter with previous images
+                mViewModel.getAllImages().observe(getFragment(), new Observer<List<ImageData>>() {
+                    @Override
+                    public void onChanged(@Nullable final List<ImageData> images) {
+                        // Update the cached copy of the images in the adapter.
+                        Log.i("StartFragment", "Observer onChanged() within menu collapse");
+                        myAdapter.setImages(images);
+                    }
+                });
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                Log.i("StartFragment", "Menu Expand");
+
+                // Clear the adapter
+                myAdapter.clearImages();
+                return true;  // Return true to expand action view
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.i("StartFragment", "OnFocusChangeListener");
+            }
+        });
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            String queryWord = "";
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                onQueryTextChange(s);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newWord) {
+                // To avoid the double search of the same content
+                if (newWord.equals(queryWord)) {
+                    return true;
+                }
+
+                queryWord = newWord;
+
+                if (queryWord.trim().equals("")) {
+
+                    // if nothing in searchView, clear the adapter.
+                    myAdapter.clearImages();
+                    return true;
+                } else {
+                    mViewModel.getImageByWord(queryWord).observe(getFragment(), new Observer<List<ImageData>>() {
+                        @Override
+                        public void onChanged(@Nullable final List<ImageData> images) {
+                            // Update the cached copy of the words in the adapter.
+                            myAdapter.setImages(images);
+                        }
+                    });
+                }
+                return true;
+            }
+        });
+    }
+
+
     /**
      * Check to see which action the user selected.
      * If the method does not recognize the user's action, it invokes the superclass method
      *
-     * @param item
+     * @param item the handle of the selected menu item
      * @return
      */
 //    @Override
@@ -155,7 +260,7 @@ public class StartFragment extends Fragment {
                 // User chose the "Settings" item, show the app settings UI...
                 return true;
 
-            case R.id.action_favorite:
+            case R.id.action_search:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
@@ -168,11 +273,21 @@ public class StartFragment extends Fragment {
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
+
+                //the superclass can expand the action view
                 return super.onOptionsItemSelected(item);
 
         }
     }
 
+
+    /**
+     *
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -199,8 +314,10 @@ public class StartFragment extends Fragment {
         });
     }
 
+
     /**
      * add to the grid
+     *
      * @param returnedPhotos
      */
     private void onPhotosReturned(List<File> returnedPhotos) {
@@ -213,6 +330,6 @@ public class StartFragment extends Fragment {
         }
     }
 
-    private Fragment getFragment() { return this;}
 
+    private Fragment getFragment() { return this;}
 }

@@ -205,6 +205,7 @@ public class AddImageFragment extends Fragment {
         imagePath_add.setImageBitmap(bitmap);
 
 
+        // Set the click listener to save the image
         final Button button = getActivity().findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("MissingPermission")

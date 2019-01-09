@@ -138,10 +138,10 @@ public class MapsFragment extends Fragment
                 // User chose the "Settings" item, show the app settings UI...
                 return true;
 
-            case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-                return true;
+//            case R.id.action_favorite:
+//                // User chose the "Favorite" action, mark the current item
+//                // as a favorite...
+//                return true;
 
             case android.R.id.home:
                 DrawerLayout mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
