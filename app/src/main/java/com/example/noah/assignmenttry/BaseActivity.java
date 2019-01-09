@@ -10,7 +10,6 @@ import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +19,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 
 public class BaseActivity extends AppCompatActivity implements ImageDetailOverview.OnImageDetailListener {
 
@@ -59,6 +57,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        // Create a new instance of MapsFragment and StartFragment
         MapsFragment mapsFragment = new MapsFragment();
         StartFragment startFragment = new StartFragment();
 
@@ -147,7 +146,8 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
             }
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle("Permission necessary");
@@ -162,12 +162,10 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                     alert.show();
 
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
                 }
-
             }
-
-
         }
     }
 

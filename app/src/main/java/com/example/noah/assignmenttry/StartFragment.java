@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -151,8 +150,6 @@ public class StartFragment extends Fragment {
      */
 //    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i("BaseActivity", "item is " + item);
-        Log.i("BaseActivity", "item title is " + item.getTitle());
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...

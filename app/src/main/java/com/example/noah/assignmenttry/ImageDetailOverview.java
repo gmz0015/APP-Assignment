@@ -81,18 +81,17 @@ public class ImageDetailOverview extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.e("ImageDetailOverview", "onCreateOptionsMenu()");
         // Get a support ActionBar corresponding to this toolbar
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
 
         // Enable the Up button
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.e("ImageDetailOverview", "onCreateOptionsMenu()");
         menu.clear();
         inflater.inflate(R.menu.main_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);

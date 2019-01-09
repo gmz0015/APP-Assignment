@@ -15,8 +15,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +116,14 @@ public class MapsFragment extends Fragment
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        menu.clear();
+        inflater.inflate(R.menu.child_menu, menu);
+    }
+
     /**
      * Check to see which action the user selected.
      * If the method does not recognize the user's action, it invokes the superclass method
@@ -121,8 +133,6 @@ public class MapsFragment extends Fragment
      */
 //    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i("BaseActivity", "item is " + item);
-        Log.i("BaseActivity", "item title is " + item.getTitle());
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
