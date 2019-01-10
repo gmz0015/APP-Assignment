@@ -94,7 +94,7 @@ public class MapsFragment extends Fragment
         }
 
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-        myAdapter = new ImageListAdapter(getActivity().getApplicationContext());
+//        myAdapter = new ImageListAdapter(getActivity().getApplicationContext(), new);
 
         mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
             @Override

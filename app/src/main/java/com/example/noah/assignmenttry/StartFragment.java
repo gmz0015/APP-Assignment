@@ -80,7 +80,7 @@ public class StartFragment extends Fragment {
         Log.i("StartFragment", "onActivityCreated()");
 
         // The number of items within a row
-        int numberOfColumns = 4;
+        int numberOfColumns = 3;
 
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
         myAdapter = new ImageListAdapter(mActivity.getApplicationContext());
@@ -89,6 +89,7 @@ public class StartFragment extends Fragment {
         RecyclerView myrecyclerView = mActivity.findViewById(R.id.recyclerview);
         myrecyclerView.setAdapter(myAdapter);
         myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
+//        myrecyclerView.addItemDecoration(new DividerGridItemDecoration(mActivity.getApplicationContext()));
 
         mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
             @Override

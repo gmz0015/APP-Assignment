@@ -2,18 +2,22 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="100dp"
-    android:layout_height="120dp">
+    android:id="@+id/image_recyclerview"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
 
     <ImageView
         android:id="@+id/image_rec"
         android:layout_width="0dp"
-        android:layout_height="87dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@android:color/holo_green_dark"
+        android:foregroundGravity="center"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/title_display"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,17 +26,17 @@
     <TextView
         android:id="@+id/title_display"
         android:layout_width="0dp"
-        android:layout_height="19dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@android:color/holo_red_dark"
         android:text="TextView"
         android:textAlignment="center"
         android:textAllCaps="false"
-        android:textSize="14sp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_rec" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,11 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     class ImageViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imageFile;
         private final TextView title;
+        private final RecyclerView mRecyclerView;
 
         private ImageViewHolder(View itemView) {
             super(itemView);
+            mRecyclerView = itemView.findViewById(R.id.recyclerview);
             imageFile = itemView.findViewById(R.id.image_rec);
             title = itemView.findViewById(R.id.title_display);
         }
@@ -64,6 +67,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
      */
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+
         if (mImages != null) {
             ImageData current = mImages.get(position);
             Bitmap tempBitmap = BitmapFactory.decodeFile(current.getImagePath());
@@ -74,6 +78,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
             holder.imageFile.setImageResource(R.drawable.example);
             holder.title.setText("No Title");
         }
+
 
 
         // Set the click listener to show the detail of image
