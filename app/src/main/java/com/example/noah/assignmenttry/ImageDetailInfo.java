@@ -128,6 +128,7 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         googleMap.addMarker(new MarkerOptions().position(appointLoc).title(title));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(appointLoc));
         googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
 //        googleMap.setPadding(20,20,20,20); // Set unclickable
     }
 

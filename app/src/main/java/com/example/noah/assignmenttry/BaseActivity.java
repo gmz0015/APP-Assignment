@@ -10,17 +10,17 @@ import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import android.view.WindowManager;
 
 public class BaseActivity extends AppCompatActivity implements ImageDetailOverview.OnImageDetailListener {
 
@@ -28,6 +28,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 7829;
     private DrawerLayout mDrawerLayout;
     private static BaseActivity activity;
+    private DisplayMetrics displayMetrics;
 
     @Override
     protected void onResume(){
@@ -59,6 +60,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        // Create a new instance of MapsFragment and StartFragment
         MapsFragment mapsFragment = new MapsFragment();
         StartFragment startFragment = new StartFragment();
 
@@ -95,6 +97,11 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                         return true;
                     }
                 });
+
+        WindowManager manager = getWindowManager();
+        displayMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(displayMetrics);
+
 
         // Set default fragment
         if (savedInstanceState == null) {
@@ -147,7 +154,8 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
             }
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle("Permission necessary");
@@ -162,12 +170,10 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                     alert.show();
 
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
                 }
-
             }
-
-
         }
     }
 

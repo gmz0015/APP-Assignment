@@ -2,7 +2,9 @@ package com.example.noah.assignmenttry;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,9 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,7 +38,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -53,6 +59,8 @@ public class AddImageFragment extends Fragment {
     private String mLastUpdateTime;
     private LocationCallback mLocationCallback;
 
+    private Activity mActivity;
+
     private String imagePath;
     public static final String FILE = "Image File";
     private static final int ACCESS_FINE_LOCATION = 123;
@@ -66,7 +74,14 @@ public class AddImageFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mActivity = (Activity)context;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -86,6 +101,31 @@ public class AddImageFragment extends Fragment {
         description_input = view.findViewById(R.id.description_input);
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.e("AddImageFragment", "onCreateOptionsMenu()");
+
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+
+        // Enable the Up button
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+        menu.clear();
+        inflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().getSupportFragmentManager().popBackStack();
+            Log.i("AddImageFragment", "onOptionItemSelected");
+            return false;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -112,10 +152,11 @@ public class AddImageFragment extends Fragment {
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-
-            return;
         }
+        // Create location services client
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        // Get the last known location
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                     @Override
@@ -164,6 +205,7 @@ public class AddImageFragment extends Fragment {
         imagePath_add.setImageBitmap(bitmap);
 
 
+        // Set the click listener to save the image
         final Button button = getActivity().findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("MissingPermission")

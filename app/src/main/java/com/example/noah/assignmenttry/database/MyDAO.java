@@ -7,7 +7,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import java.io.File;
 import java.util.List;
 
 @Dao
@@ -17,6 +16,9 @@ public interface MyDAO {
 
     @Query("SELECT * FROM image_table WHERE imagePath IN (:imagePaths)")
     LiveData<ImageData> loadAllByIds(String[] imagePaths);
+
+    @Query("SELECT * FROM image_table WHERE title LIKE :word")
+    LiveData<List<ImageData>> getImageByWord(String word);
 
     @Query("SELECT * FROM image_table WHERE title = :imageTitle")
     ImageData getImageByTitle(String imageTitle);

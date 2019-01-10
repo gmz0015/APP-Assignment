@@ -14,9 +14,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +96,7 @@ public class MapsFragment extends Fragment
         }
 
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-        myAdapter = new ImageListAdapter(getActivity().getApplicationContext());
+//        myAdapter = new ImageListAdapter(getActivity().getApplicationContext(), new);
 
         mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
             @Override
@@ -113,6 +119,112 @@ public class MapsFragment extends Fragment
     }
 
     /**
+     * Set toolbar to have menu, search and setting options
+     *
+     * @param menu
+     * @param inflater
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.i("MapsFragment", "onCreateOptionsMenu()");
+
+        // Clear the previous menu
+        menu.clear();
+
+        // Inflate the menu with main_menu.xml
+        inflater.inflate(R.menu.main_menu, menu);
+
+        // Set the home icon is menu
+        ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+
+        // Set the search view
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView =
+                (SearchView) searchItem.getActionView();
+
+        // Get the MenuItem for the action item
+        MenuItem actionMenuItem = menu.findItem(R.id.action_search);
+
+        // Assign the listener to that action item
+        MenuItemCompat.setOnActionExpandListener(actionMenuItem, new MenuItemCompat.OnActionExpandListener() {
+            // Define the listener
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.i("StartFragment", "Menu Collapse");
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                Log.i("StartFragment", "Menu Expand");
+                return true;  // Return true to expand action view
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+
+
+                    // if no longer focus on the search view,
+                    // then reset the zoom level.
+
+                    // Reset the zoom level to 10
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                }
+            }
+        });
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            String queryWord = "";
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                onQueryTextChange(s);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newWord) {
+
+                // To avoid the double search of the same content
+                if (newWord.equals(queryWord)) {
+                    return true;
+                }
+
+                // Update the query word
+                queryWord = newWord;
+
+                if (queryWord.trim().equals("")) {
+                    Log.i("StartFragment", "onQueryTextChange and Clear image");
+
+                    // if nothing in searchView, Reset the zoom level to 10.
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                    return true;
+                } else {
+                    Log.i("StartFragment", "onQueryTextChange and set search image with " + queryWord);
+
+                    ImageData current = mViewModel.getImageByTitle(queryWord);
+                    if (current != null) {
+
+                        // if get the image by title
+                        MapsFragment.getMap().moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(current.getLatitide(), current.getLongitude()), 8));
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+
+
+
+    /**
      * Check to see which action the user selected.
      * If the method does not recognize the user's action, it invokes the superclass method
      *
@@ -121,17 +233,15 @@ public class MapsFragment extends Fragment
      */
 //    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i("BaseActivity", "item is " + item);
-        Log.i("BaseActivity", "item title is " + item.getTitle());
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
                 return true;
 
-            case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-                return true;
+//            case R.id.action_favorite:
+//                // User chose the "Favorite" action, mark the current item
+//                // as a favorite...
+//                return true;
 
             case android.R.id.home:
                 DrawerLayout mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);

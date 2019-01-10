@@ -6,4 +6,6 @@
     <string name="image_url">Image</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="search">Search</string>
+    <string name="setting">Settings</string>
 </resources>
