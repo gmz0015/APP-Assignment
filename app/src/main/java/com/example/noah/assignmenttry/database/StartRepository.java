@@ -10,13 +10,14 @@ import java.util.concurrent.ExecutionException;
 public class StartRepository {
     private final MyDAO myDAO;
     private LiveData<List<ImageData>> myAllImage;
-    private LiveData<List<ImageData>> mImageByTitle;
+    private LiveData<List<ImageData>> mImageByWord;
 
     public StartRepository(Application application) {
         MyDatabase db = MyDatabase.getDatabase(application);
         myDAO = db.myDao();
         myAllImage = myDAO.getAllImages();
     }
+
 
 
     /**
@@ -37,9 +38,11 @@ public class StartRepository {
      * @return the image which contains the word
      */
     public LiveData<List<ImageData>> getImageByWord(String word)  {
-        mImageByTitle = myDAO.getImageByWord(word);
-        return mImageByTitle;
+        mImageByWord = myDAO.getImageByWord(word);
+        return mImageByWord;
     }
+
+
 
     /**
      * Get the image by title
@@ -56,6 +59,8 @@ public class StartRepository {
         }
         return imageData;
     }
+
+
 
     /**
      * Insert the new image to database
@@ -92,6 +97,32 @@ public class StartRepository {
         @Override
         protected ImageData doInBackground(final String... params) {
             return mAsyncTaskDao.getImageByTitle(params[0]);
+        }
+    }
+
+
+
+    /**
+     * Insert the new image to database
+     * @param image the ImageData
+     */
+    public void delete (ImageData image) {
+        new deleteAsyncTask(myDAO).execute(image);
+    }
+
+
+    private static class deleteAsyncTask extends AsyncTask<ImageData, Void, Void> {
+
+        private MyDAO mAsyncTaskDao;
+
+        deleteAsyncTask(MyDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final ImageData... params) {
+            mAsyncTaskDao.delete(params[0]);
+            return null;
         }
     }
 

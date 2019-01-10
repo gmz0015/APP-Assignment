@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -81,10 +82,33 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
 
 
+        // Assign the long click listener on item
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.i("ImageListAdapter", "OnLongClickListener");
+
+                // Invoke the ImageDetailOverview to show the detail of the clicked image
+
+                // Create the instance of ImageData of the clicked image
+                ImageData current = mImages.get(position);
+
+                // Invoke the CallBack at StartFragment
+                // TODO Need to be make sure whether is correct
+                if (mImageLongListener != null) {
+                    mImageLongListener.onImageLongClick(current);
+                }
+                return true;
+            }
+        });
+
+
+
         // Set the click listener to show the detail of image
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("ImageListAdapter", "OnshortClickListener");
 
                 // Invoke the ImageDetailOverview to show the detail of the clicked image
 
@@ -104,8 +128,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
                 // Invoke the CallBack at StartFragment
                 // TODO Need to be make sure whether is correct
-                if (mImageListAdapterListener != null) {
-                    mImageListAdapterListener.onImageListAdapterClick(imageDetailOverview);
+                if (mImageShortListener != null) {
+                    mImageShortListener.onImageShortClick(imageDetailOverview);
                 }
             }
         });
@@ -118,11 +142,12 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
      *
      * Invoke at StartFragment
      *
-     * @param images
+     * @param image
      */
-    void setImages(List<ImageData> images) {
-        mImages = images;
-        mImagesBackup = mImages;
+    void setImages(List<ImageData> image) {
+        mImages = image;
+//        mImages = images;
+//        mImagesBackup = mImages;
         notifyDataSetChanged();
     }
 
@@ -169,14 +194,32 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
      * The CallBack for "StartFragment"
      * TODO Need to decide the exact words
      */
-    private imageListAdapterListener mImageListAdapterListener;
-
     // CallBack
-    public interface imageListAdapterListener {
-        void onImageListAdapterClick(ImageDetailOverview imageDetailOverview);
+    public interface imageShortListener {
+        void onImageShortClick(ImageDetailOverview imageDetailOverview);
     }
 
-    public void setOnImageListAdapterClickListener (imageListAdapterListener  imageListAdapterListener) {
-        this.mImageListAdapterListener = imageListAdapterListener;
+    private imageShortListener mImageShortListener;
+
+    public void setOnImageShortClickListener(imageShortListener imageShortListener) {
+        this.mImageShortListener = imageShortListener;
+    }
+
+
+
+
+    /**
+     * The CallBack for "StartFragment"
+     * TODO Need to decide the exact words
+     */
+    // CallBack
+    public interface imageLongListener {
+        void onImageLongClick(ImageData imageData);
+    }
+
+    private imageLongListener mImageLongListener;
+
+    public void setOnImageLongClickListener(imageLongListener imageLongListener) {
+        this.mImageLongListener = imageLongListener;
     }
 }

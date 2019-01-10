@@ -1,9 +1,12 @@
 package com.example.noah.assignmenttry;
 
 import android.app.Activity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,17 +19,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.noah.assignmenttry.database.ImageData;
 
@@ -89,20 +95,21 @@ public class StartFragment extends Fragment {
         RecyclerView myrecyclerView = mActivity.findViewById(R.id.recyclerview);
         myrecyclerView.setAdapter(myAdapter);
         myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
-//        myrecyclerView.addItemDecoration(new DividerGridItemDecoration(mActivity.getApplicationContext()));
 
-        mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
-            @Override
-            public void onChanged(@Nullable final List<ImageData> images) {
-                // Update the cached copy of the images in the adapter.
-                Log.i("StartFragment", "Observer onChanged()");
-                myAdapter.setImages(images);
-            }
+
+        mViewModel.setImageDataTrigger(0);
+        mViewModel.getImageDataLiveData().observe(this, dataList -> {
+            // update UI with data from dataList
+            Log.i("StartFragment", "Observer onChanged() switchMap");
+            myAdapter.setImages(dataList);
         });
+
 
 
         // Set FloatingActionButton for access to gallery
         FloatingActionButton fab_gallery = getActivity().findViewById(R.id.fab_gallery);
+
+        // Assign the listener to fab_gallery
         fab_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,8 +118,11 @@ public class StartFragment extends Fragment {
         });
 
 
+
         // Set FloatingActionButton for access to gallery
         FloatingActionButton fab_camera = getActivity().findViewById(R.id.fab_camera);
+
+        // Assign the listener to fab_camera
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,12 +132,22 @@ public class StartFragment extends Fragment {
 
 
         // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
-        myAdapter.setOnImageListAdapterClickListener (new ImageListAdapter.imageListAdapterListener(){
+        // Short Click
+        myAdapter.setOnImageShortClickListener(new ImageListAdapter.imageShortListener(){
             @Override
-            public void onImageListAdapterClick(ImageDetailOverview imageDetailOverview){
+            public void onImageShortClick(ImageDetailOverview imageDetailOverview){
                 FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
                 fragmentTransaction.hide(getFragment());
                 fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
+            }
+        });
+
+        // The Callback for "ImageListAdapter" to invoke "ImageDetailOverview"
+        // Long Click
+        myAdapter.setOnImageLongClickListener(new ImageListAdapter.imageLongListener() {
+            @Override
+            public void onImageLongClick(ImageData imageData) {
+                showLongClickDialog(imageData);
             }
         });
     }
@@ -147,6 +167,7 @@ public class StartFragment extends Fragment {
     }
 
 
+
     /**
      * Set toolbar
      *
@@ -163,9 +184,11 @@ public class StartFragment extends Fragment {
         // Inflate the menu with main_menu.xml
         inflater.inflate(R.menu.main_menu, menu);
 
+        // Set the home icon is menu
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
+        // Set the search view
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView =
                 (SearchView) searchItem.getActionView();
@@ -178,16 +201,6 @@ public class StartFragment extends Fragment {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 Log.i("StartFragment", "Menu Collapse");
-
-                // Restore the adapter with previous images
-                mViewModel.getAllImages().observe(getFragment(), new Observer<List<ImageData>>() {
-                    @Override
-                    public void onChanged(@Nullable final List<ImageData> images) {
-                        // Update the cached copy of the images in the adapter.
-                        Log.i("StartFragment", "Observer onChanged() within menu collapse");
-                        myAdapter.setImages(images);
-                    }
-                });
                 return true;  // Return true to collapse action view
             }
 
@@ -196,15 +209,20 @@ public class StartFragment extends Fragment {
                 Log.i("StartFragment", "Menu Expand");
 
                 // Clear the adapter
-                myAdapter.clearImages();
+                mViewModel.setImageDataTrigger(1);
                 return true;  // Return true to expand action view
             }
         });
 
+
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.i("StartFragment", "OnFocusChangeListener");
+                if (!hasFocus) {
+                    Log.i("StartFragment", "OnFocusChange with View: " + v);
+                    mViewModel.setImageDataTrigger(0);
+                    return;
+                }
             }
         });
 
@@ -220,31 +238,30 @@ public class StartFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newWord) {
+
                 // To avoid the double search of the same content
                 if (newWord.equals(queryWord)) {
                     return true;
                 }
 
+                // Update the query word
                 queryWord = newWord;
 
                 if (queryWord.trim().equals("")) {
-
+                    Log.i("StartFragment", "onQueryTextChange and Clear image");
                     // if nothing in searchView, clear the adapter.
-                    myAdapter.clearImages();
+                    mViewModel.setImageDataTrigger(1);
                     return true;
                 } else {
-                    mViewModel.getImageByWord(queryWord).observe(getFragment(), new Observer<List<ImageData>>() {
-                        @Override
-                        public void onChanged(@Nullable final List<ImageData> images) {
-                            // Update the cached copy of the words in the adapter.
-                            myAdapter.setImages(images);
-                        }
-                    });
+                    Log.i("StartFragment", "onQueryTextChange and set search image with " + queryWord);
+                    mViewModel.setSearchTrigger(queryWord);
                 }
                 return true;
             }
         });
     }
+
+
 
 
     /**
@@ -279,6 +296,45 @@ public class StartFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+
+
+
+    /**
+     * Show dialog for long click
+     *
+     * Edit or Delete
+     */
+    private void showLongClickDialog(ImageData imageData){
+        final String[] items = { "Edit", "Delete"};
+        AlertDialog.Builder longClickDialog =
+                new AlertDialog.Builder(mActivity);
+        longClickDialog.setTitle("What do you want to do");
+        longClickDialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+
+                if (item == 0) {
+
+                    // User click the Edit
+                    Toast.makeText(mActivity,
+                            "Edit",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                if (item == 1) {
+
+                    mViewModel.delete(imageData);
+
+                    // User click the Delete
+                    Toast.makeText(mActivity,
+                            "The image has been deleted",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        longClickDialog.show();
     }
 
 
