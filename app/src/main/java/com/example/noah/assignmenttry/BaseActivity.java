@@ -73,13 +73,13 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                         switch (menuItem.getItemId()) {
                             case R.id.nav_grid_view:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.container, startFragment.newInstance())
+                                        .replace(R.id.baseContainer, startFragment.newInstance())
                                         .commitNow();
                                 break;
 
                             case R.id.nav_map_view:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.container, mapsFragment.newInstance())
+                                        .replace(R.id.baseContainer, mapsFragment.newInstance())
                                         .commitNow();
                                 break;
                             default:
@@ -106,7 +106,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         // Set default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, startFragment.newInstance())
+                    .replace(R.id.baseContainer, startFragment.newInstance())
                     .commitNow();
         }
     }
@@ -119,7 +119,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         args.putString("Title", title);
         args.putString("Description", description);
         imageDetailOverview.setArguments(args);
-        getSupportFragmentManager().beginTransaction().addToBackStack(null).add(R.id.container, imageDetailOverview).commit();
+        getSupportFragmentManager().beginTransaction().addToBackStack(null).add(R.id.baseContainer, imageDetailOverview).commit();
 
     }
 

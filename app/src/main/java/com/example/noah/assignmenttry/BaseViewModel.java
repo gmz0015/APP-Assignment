@@ -14,10 +14,8 @@ import com.example.noah.assignmenttry.database.StartRepository;
 import java.util.List;
 
 public class BaseViewModel extends AndroidViewModel {
-//    private LiveData<List<ImageData>> mImageByWord;// TODO Waiting to delete
     private LiveData<List<ImageData>> mAllImage;
     private StartRepository myRepository;
-//    private LiveData<List<ImageData>> mImage;// TODO Waiting to delete
     private final MutableLiveData<Integer> imageLiveDataTrigger;
     private final MutableLiveData<String> searchLiveDataTrigger;
     public final LiveData<List<ImageData>> imageDataLiveData;
@@ -49,18 +47,6 @@ public class BaseViewModel extends AndroidViewModel {
     LiveData<List<ImageData>> getAllImages() { return mAllImage; }
 
 
-
-    // TODO Waiting to Delete
-    /**
-     * Get the images containing the word in title
-     *
-     * @param
-     * @return
-     */
-//    LiveData<List<ImageData>>  getImageByWord(String word) {
-//        mImageByWord = myRepository.getImageByWord(word);
-//        return mImageByWord;
-//    }
 
     public LiveData<List<ImageData>> getImageDataLiveData(){ return imageDataLiveData; }
 

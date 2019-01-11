@@ -49,7 +49,7 @@ public abstract class MyDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(final Void... params) {
 //            mDao.deleteAll();
-//            ImageData image = new ImageData("Waiting to add url", "Waiting to add title", "Waiting to add desc");
+//            ImageData image = new ImageData("Waiting to add_image_preview url", "Waiting to add_image_preview title", "Waiting to add_image_preview desc");
 //            mDao.insert(image);
             return null;
         }

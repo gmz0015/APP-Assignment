@@ -138,7 +138,7 @@ public class StartFragment extends Fragment {
             public void onImageShortClick(ImageDetailOverview imageDetailOverview){
                 FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
                 fragmentTransaction.hide(getFragment());
-                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
+                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, imageDetailOverview, "Image Detail").commit();
             }
         });
 
@@ -373,7 +373,7 @@ public class StartFragment extends Fragment {
 
 
     /**
-     * add to the grid
+     * add_image_preview to the grid
      *
      * @param returnedPhotos
      */
@@ -383,7 +383,7 @@ public class StartFragment extends Fragment {
             addImageFragment.setImage(file.getAbsolutePath());
             FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
             fragmentTransaction.hide(getFragment());
-            fragmentTransaction.addToBackStack("Start Fragment").add(R.id.container, addImageFragment, "Add Image").commit();
+            fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, addImageFragment, "Add Image").commit();
         }
     }
 

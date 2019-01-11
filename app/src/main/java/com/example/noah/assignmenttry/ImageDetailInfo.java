@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,8 +96,6 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         timeView = view.findViewById(R.id.time_detail);
         mMapView = (MapView) view.findViewById(R.id.mapView_detail);
 
-        mMapView.getMapAsync(this);
-
         builder.setView(view).setNegativeButton("Back", null);
         return builder.create();
     }
@@ -118,6 +115,9 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         mMapView.onCreate(mapViewBundle);
 
+        if (latitude != null) {
+            mMapView.getMapAsync(this);
+        }
     }
 
 

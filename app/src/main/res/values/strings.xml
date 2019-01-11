@@ -2,7 +2,8 @@
     <string name="app_name">AssignmentTry</string>
     <string name="hint_word">Word...</string>
     <string name="button_save">Save</string>
-    <string name="empty_not_saved">Image not saved because it is empty.</string>
+    <string name="empty_title_not_saved">Image not saved because its title is empty.</string>
+    <string name="empty_date_not_saved">Image not saved because its date is empty.</string>
     <string name="image_url">Image</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
