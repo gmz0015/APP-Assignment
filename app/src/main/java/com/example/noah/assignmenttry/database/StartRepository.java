@@ -3,7 +3,9 @@ package com.example.noah.assignmenttry.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -20,6 +22,7 @@ public class StartRepository {
 
 
 
+
     /**
      * Get all images
      *
@@ -31,6 +34,7 @@ public class StartRepository {
 
 
 
+
     /**
      * Get the images containing the words in title
      *
@@ -38,9 +42,11 @@ public class StartRepository {
      * @return the image which contains the word
      */
     public LiveData<List<ImageData>> getImageByWord(String word)  {
-        mImageByWord = myDAO.getImageByWord(word);
+        String searchWord = "%" + word + "%";
+        mImageByWord = myDAO.getImageByWord(searchWord);
         return mImageByWord;
     }
+
 
 
 
@@ -50,15 +56,33 @@ public class StartRepository {
      * @param title the title displaying on map
      * @return the image which has the same title
      */
-    public ImageData getImageByTitle(String title)  {
-        ImageData imageData = null;
+    public List<ImageData> searchImageByWordAll(String date, String title, String description)  {
+        List<ImageData> imageData = new ArrayList<>();
         try {
-            imageData = new getAsyncTask(myDAO).execute(title).get();
+            imageData = new searchAsyncTask(myDAO).execute(date, title, description).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return imageData;
     }
+
+
+    private static class searchAsyncTask extends AsyncTask<String, Void, List<ImageData>> {
+
+        private MyDAO mAsyncTaskDao;
+
+        searchAsyncTask(MyDAO dao) { mAsyncTaskDao = dao; }
+
+        @Override
+        protected List<ImageData> doInBackground(final String... params) {
+            List<ImageData> imageData = new ArrayList<>();
+            imageData.addAll(mAsyncTaskDao.searchImageByWordInDate("%" + params[0] + "%"));
+            imageData.addAll(mAsyncTaskDao.searchImageByWordInTitle("%" + params[1] + "%"));
+            imageData.addAll(mAsyncTaskDao.searchImageByWordInDescription("%" + params[2] + "%"));
+            return imageData;
+        }
+    }
+
 
 
 
@@ -88,6 +112,24 @@ public class StartRepository {
 
 
 
+
+    /**
+     * Get the image by title
+     *
+     * @param title the title displaying on map
+     * @return the image which has the same title
+     */
+    public ImageData getImageByTitle(String title)  {
+        ImageData imageData = null;
+        try {
+            imageData = new getAsyncTask(myDAO).execute(title).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return imageData;
+    }
+
+
     private static class getAsyncTask extends AsyncTask<String, Void, ImageData> {
 
         private MyDAO mAsyncTaskDao;
@@ -99,6 +141,7 @@ public class StartRepository {
             return mAsyncTaskDao.getImageByTitle(params[0]);
         }
     }
+
 
 
 

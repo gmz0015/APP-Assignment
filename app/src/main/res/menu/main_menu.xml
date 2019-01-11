@@ -13,9 +13,6 @@
         android:lines="1"/>
 
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings_refresh"
-        android:title="Refresh"
-        app:showAsAction="never"/>
 
     <item android:id="@+id/action_settings"
         android:title="@string/setting"

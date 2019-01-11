@@ -54,11 +54,15 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         Bundle bundle = new Bundle();
         bundle.putString("Title", title);
         bundle.putString("Description", description);
-        bundle.putDouble("Longitude", longitude);
-        bundle.putDouble("Latitude", latitude);
         bundle.putString("Time", time);
         imageDeatilInfo.setArguments(bundle);
-
+        if (longitude != null){
+            bundle.putDouble("Longitude", longitude);
+            bundle.putDouble("Latitude", latitude);
+        }else {
+            bundle.putDouble("Longitude", 0);
+            bundle.putDouble("Latitude", 0);
+        }
         return imageDeatilInfo;
     }
 
@@ -115,7 +119,7 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         mMapView.onCreate(mapViewBundle);
 
-        if (latitude != null) {
+        if (latitude != 0) {
             mMapView.getMapAsync(this);
         }
     }

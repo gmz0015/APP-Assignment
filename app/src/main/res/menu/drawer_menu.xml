@@ -9,5 +9,10 @@
             android:id="@+id/nav_map_view"
             android:icon="@drawable/ic_gallery_black_24dp"
             android:title="Map View" />
+
+        <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/ic_search_black_24dp"
+            android:title="Search" />
     </group>
 </menu>

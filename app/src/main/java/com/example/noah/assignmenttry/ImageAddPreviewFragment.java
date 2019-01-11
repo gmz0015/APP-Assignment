@@ -14,12 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-public class AddPreviewFragment extends Fragment {
+public class ImageAddPreviewFragment extends Fragment {
     private ImageView imageView;
     private String imagePath;
     private Activity mActivity;
 
-    public AddPreviewFragment (){}
+    public ImageAddPreviewFragment(){}
 
     @Override
     public void onAttach(Context context){
@@ -36,7 +36,7 @@ public class AddPreviewFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.add_image_preview, container, false);
+        View view = inflater.inflate(R.layout.image_add_preview, container, false);
         imageView = view.findViewById(R.id.imagePreview);
         return view;
     }
@@ -52,18 +52,18 @@ public class AddPreviewFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        Log.i("AddPreviewFragment", "onResume()");
+        Log.i("ImageAddPreviewFragment", "onResume()");
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        Log.i("AddPreviewFragment", "onPause()");
+        Log.i("ImageAddPreviewFragment", "onPause()");
     }
 
     @Override
     public void onDestroy(){
-        Log.i("AddPreviewFragment", "onDestroy()");
+        Log.i("ImageAddPreviewFragment", "onDestroy()");
         super.onDestroy();
     }
 

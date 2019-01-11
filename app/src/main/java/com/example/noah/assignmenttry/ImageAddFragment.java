@@ -28,7 +28,7 @@ import com.example.noah.assignmenttry.database.ImageData;
 import java.util.ArrayList;
 
 
-public class AddImageFragment extends Fragment {
+public class ImageAddFragment extends Fragment {
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -40,16 +40,16 @@ public class AddImageFragment extends Fragment {
     private BaseViewModel mViewModel;
     private Activity mActivity;
     private ArrayList<Fragment> fragments = new ArrayList<>();
-    private ImageAddAdapter mImageAddAdapter;
-    private AddPreviewFragment addPreviewFragment = new AddPreviewFragment();
-    private AddInfoFragment addInfoFragment = new AddInfoFragment();
+    private ImageTabLayoutAdapter mImageTabLayoutAdapter;
+    private ImageAddPreviewFragment imageAddPreviewFragment = new ImageAddPreviewFragment();
+    private ImageAddInfoFragment imageAddInfoFragment = new ImageAddInfoFragment();
 
 
     private String imagePath;
     public static final String FILE = "Image File";
     private final String[] titles = new String[]{"Preview", "Add Detail"};
 
-    public AddImageFragment() {
+    public ImageAddFragment() {
     }
 
     public boolean setImage(String imagePath){
@@ -74,7 +74,7 @@ public class AddImageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.add_new_image, container, false);
+        View view = inflater.inflate(R.layout.image_add, container, false);
 
         // Set the handle of component
         mTabLayout = (TabLayout) view.findViewById(R.id.addTabLayout);
@@ -90,16 +90,16 @@ public class AddImageFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 
-        addPreviewFragment.setPath(imagePath);
-        fragments.add(addPreviewFragment);
+        imageAddPreviewFragment.setPath(imagePath);
+        fragments.add(imageAddPreviewFragment);
         mTabLayout.addTab(mTabLayout.newTab());
 
-        fragments.add(addInfoFragment);
+        fragments.add(imageAddInfoFragment);
         mTabLayout.addTab(mTabLayout.newTab());
 
         mTabLayout.setupWithViewPager(mViewPager,false);
-        mImageAddAdapter = new ImageAddAdapter(fragments, getChildFragmentManager());
-        mViewPager.setAdapter(mImageAddAdapter);
+        mImageTabLayoutAdapter = new ImageTabLayoutAdapter(fragments, getChildFragmentManager());
+        mViewPager.setAdapter(mImageTabLayoutAdapter);
 
         for(int i=0;i<titles.length;i++){
             mTabLayout.getTabAt(i).setText(titles[i]);
@@ -110,9 +110,9 @@ public class AddImageFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                titleText = mActivity.findViewById(R.id.titleText);
-                descriptionText = mActivity.findViewById(R.id.descriptionText);
-                dateText = mActivity.findViewById(R.id.dateText);
+                titleText = mActivity.findViewById(R.id.searchTitleText);
+                descriptionText = mActivity.findViewById(R.id.searchDescriptionText);
+                dateText = mActivity.findViewById(R.id.searchDateText);
 
                 if (TextUtils.isEmpty(descriptionText.getText())) {
                     Toast.makeText(
@@ -140,9 +140,9 @@ public class AddImageFragment extends Fragment {
                     ImageData image = new ImageData(imagePath,
                             title,
                             description,
-                            addInfoFragment.getCurrentLongitude(),
-                            addInfoFragment.getCurrentLatitude(),
-                            addInfoFragment.getCurrentDate());
+                            imageAddInfoFragment.getCurrentLongitude(),
+                            imageAddInfoFragment.getCurrentLatitude(),
+                            imageAddInfoFragment.getCurrentDate());
 
                     mViewModel.insert(image);
                 }else {
@@ -151,9 +151,9 @@ public class AddImageFragment extends Fragment {
                     ImageData image = new ImageData(imagePath,
                             title,
                             description,
-                            addInfoFragment.getCurrentLongitude(),
-                            addInfoFragment.getCurrentLatitude(),
-                            addInfoFragment.getCurrentDate());
+                            imageAddInfoFragment.getCurrentLongitude(),
+                            imageAddInfoFragment.getCurrentLatitude(),
+                            imageAddInfoFragment.getCurrentDate());
 
                     mViewModel.insert(image);
                 }
@@ -166,15 +166,15 @@ public class AddImageFragment extends Fragment {
 
     @Override
     public void onDestroy(){
-//        Log.i("AddImageFragment", "onDestroy()");
-//        addPreviewFragment.onDestroy();
-//        addInfoFragment.onDestroy();
+//        Log.i("ImageAddFragment", "onDestroy()");
+//        imageAddPreviewFragment.onDestroy();
+//        imageAddInfoFragment.onDestroy();
         super.onDestroy();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.i("AddImageFragment", "onCreateOptionsMenu()");
+        Log.i("ImageAddFragment", "onCreateOptionsMenu()");
 
         // Get a support ActionBar corresponding to this toolbar
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
@@ -183,7 +183,7 @@ public class AddImageFragment extends Fragment {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
         menu.clear();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.child_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -191,7 +191,7 @@ public class AddImageFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             getActivity().getSupportFragmentManager().popBackStack();
-            Log.i("AddImageFragment", "onOptionItemSelected");
+            Log.i("ImageAddFragment", "onOptionItemSelected");
             return false;
         }
         return super.onOptionsItemSelected(item);

@@ -7,7 +7,7 @@
 
     https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=8F:0B:17:B0:1F:4E:AB:AB:28:E6:FD:1D:70:D0:BD:4C:32:C6:23:A8%3Bcom.example.noah.mapapplication
 
-    You can also add_image_preview your credentials to an existing key, using these values:
+    You can also image_add_preview your credentials to an existing key, using these values:
 
     Package name:
     8F:0B:17:B0:1F:4E:AB:AB:28:E6:FD:1D:70:D0:BD:4C:32:C6:23:A8

@@ -105,14 +105,16 @@ public class MapsFragment extends Fragment
                 Log.i("MapsFragment", "Observer onChanged()");
 //                myAdapter.setImages(images);
                 for (ImageData imageData: images){
-                    Double mLon = imageData.getLongitude();
-                    Double mLat = imageData.getLatitide();
-                    String mLastUpdateTime = imageData.getTime();
-                    Log.i("MAP (ImageListAdapter)", "new location " + mLon.toString() + mLat.toString());
-                    MapsFragment.getMap().addMarker(new MarkerOptions().position(new
+                    if (imageData.getLongitude() != null) {
+                        Double mLon = imageData.getLongitude();
+                        Double mLat = imageData.getLatitide();
+                        String mLastUpdateTime = imageData.getTime();
+//                    Log.i("MAP (ImageListAdapter)", "new location " + mLon.toString() + mLat.toString());
+                        MapsFragment.getMap().addMarker(new MarkerOptions().position(new
                                 LatLng(mLat, mLon))
                                 .title(imageData.getTitle()));
-                    MapsFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10));
+                        MapsFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10));
+                    }
                 }
             }
         });
@@ -151,13 +153,13 @@ public class MapsFragment extends Fragment
             // Define the listener
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                Log.i("StartFragment", "Menu Collapse");
+                Log.i("GridFragment", "Menu Collapse");
                 return true;  // Return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                Log.i("StartFragment", "Menu Expand");
+                Log.i("GridFragment", "Menu Expand");
                 return true;  // Return true to expand action view
             }
         });
@@ -199,13 +201,13 @@ public class MapsFragment extends Fragment
                 queryWord = newWord;
 
                 if (queryWord.trim().equals("")) {
-                    Log.i("StartFragment", "onQueryTextChange and Clear image");
+                    Log.i("GridFragment", "onQueryTextChange and Clear image");
 
                     // if nothing in searchView, Reset the zoom level to 10.
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
                     return true;
                 } else {
-                    Log.i("StartFragment", "onQueryTextChange and set search image with " + queryWord);
+                    Log.i("GridFragment", "onQueryTextChange and set search image with " + queryWord);
 
                     ImageData current = mViewModel.getImageByTitle(queryWord);
                     if (current != null) {
@@ -237,11 +239,6 @@ public class MapsFragment extends Fragment
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
                 return true;
-
-//            case R.id.action_favorite:
-//                // User chose the "Favorite" action, mark the current item
-//                // as a favorite...
-//                return true;
 
             case android.R.id.home:
                 DrawerLayout mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
@@ -335,7 +332,7 @@ public class MapsFragment extends Fragment
                 current.getTime());
         FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
         fragmentTransaction.hide(getFragment());
-        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
+        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.baseContainer, imageDetailOverview, "Image Detail").commit();
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the

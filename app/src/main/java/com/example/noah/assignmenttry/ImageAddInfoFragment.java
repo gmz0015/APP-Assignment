@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class AddInfoFragment extends Fragment implements OnMapReadyCallback {
+public class ImageAddInfoFragment extends Fragment implements OnMapReadyCallback {
 
     /* Instance Field */
     private CalendarView calendarView;
@@ -43,7 +43,7 @@ public class AddInfoFragment extends Fragment implements OnMapReadyCallback {
 
     private Activity mActivity;
     private BaseViewModel mViewModel;
-    private ChoseDate mChoseDate = new ChoseDate();;
+    private ChoseDateDialog mChoseDateDialog = new ChoseDateDialog();
 
     private String date;
     private Double longitude = null;
@@ -52,7 +52,7 @@ public class AddInfoFragment extends Fragment implements OnMapReadyCallback {
     private static final int ACCESS_FINE_LOCATION = 123;
     private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDhxfa-6SwMQ3bhnzxtWmG3UDOntkJhTcg";
 
-    public AddInfoFragment (){}
+    public ImageAddInfoFragment(){}
 
     @Override
     public void onAttach(Context context){
@@ -69,12 +69,12 @@ public class AddInfoFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.add_image_info, container, false);
+        View view = inflater.inflate(R.layout.image_add_info, container, false);
 
         // Set the handle of component
         calendarView = view.findViewById(R.id.calendarView);
-        dateText = view.findViewById(R.id.dateText);
-        descriptionText = view.findViewById(R.id.descriptionText);
+        dateText = view.findViewById(R.id.searchDateText);
+        descriptionText = view.findViewById(R.id.searchDescriptionText);
         fab_calendar = view.findViewById(R.id.fab_calendar);
         mMapView = view.findViewById(R.id.mapView);
 
@@ -95,7 +95,7 @@ public class AddInfoFragment extends Fragment implements OnMapReadyCallback {
         fab_calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mChoseDate.show(getFragmentManager(), "Chose date");
+                mChoseDateDialog.show(getFragmentManager(), "Chose date");
             }
         });
 
@@ -144,17 +144,16 @@ public class AddInfoFragment extends Fragment implements OnMapReadyCallback {
 
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
 
-        mChoseDate.setOnAddImageDate(new ChoseDate.addImageDate() {
+        mChoseDateDialog.setOnAddImageDate(new ChoseDateDialog.addImageDate() {
             @Override
             public void onDateChosen(int month, int day, int year) {
-                date = month + "/" + day +"/" + year;
-                Log.i("AddInfoFragment", date);
+                date = month + "-" + day +"-" + year;
                 dateText.setText(date);
             }
         });
     }
 
-    public AddInfoFragment getFragment() { return this; }
+    public ImageAddInfoFragment getFragment() { return this; }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

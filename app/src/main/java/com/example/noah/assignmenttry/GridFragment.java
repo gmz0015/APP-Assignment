@@ -1,9 +1,6 @@
 package com.example.noah.assignmenttry;
 
 import android.app.Activity;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +22,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,16 +38,19 @@ import java.util.List;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
-public class StartFragment extends Fragment {
+public class GridFragment extends Fragment {
 
+    /* Instance Field */
     private BaseViewModel mViewModel;
     private FragmentManager mfragManager;
     private ImageListAdapter myAdapter;
-
     private Activity mActivity;
 
-    public static StartFragment newInstance() {
-        return new StartFragment();
+    private final int LIST_STATUS = 0;
+    private final int SEARCH_WORD_STATUS = 1;
+
+    public static GridFragment newInstance() {
+        return new GridFragment();
     }
 
     @Override
@@ -76,14 +75,14 @@ public class StartFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.start_fragment, container, false);
+        return inflater.inflate(R.layout.grid_fragment, container, false);
     }
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.i("StartFragment", "onActivityCreated()");
+        Log.i("GridFragment", "onActivityCreated()");
 
         // The number of items within a row
         int numberOfColumns = 3;
@@ -97,10 +96,9 @@ public class StartFragment extends Fragment {
         myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
 
 
-        mViewModel.setImageDataTrigger(0);
+        mViewModel.setImageDataTrigger(LIST_STATUS);
         mViewModel.getImageDataLiveData().observe(this, dataList -> {
             // update UI with data from dataList
-            Log.i("StartFragment", "Observer onChanged() switchMap");
             myAdapter.setImages(dataList);
         });
 
@@ -113,7 +111,7 @@ public class StartFragment extends Fragment {
         fab_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyImage.openGallery(StartFragment.this, 0); // Important
+                EasyImage.openGallery(GridFragment.this, 0); // Important
             }
         });
 
@@ -126,7 +124,7 @@ public class StartFragment extends Fragment {
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyImage.openCamera(StartFragment.this, 0); // Important
+                EasyImage.openCamera(GridFragment.this, 0); // Important
             }
         });
 
@@ -156,14 +154,14 @@ public class StartFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.i("StartFragment", "onStart()");
+        Log.i("GridFragment", "onStart()");
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("StartFragment", "onResume()");
+        Log.i("GridFragment", "onResume()");
     }
 
 
@@ -176,7 +174,7 @@ public class StartFragment extends Fragment {
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.i("StartFragment", "onCreateOptionsMenu()");
+        Log.i("GridFragment", "onCreateOptionsMenu()");
 
         // Clear the previous menu
         menu.clear();
@@ -200,16 +198,16 @@ public class StartFragment extends Fragment {
             // Define the listener
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                Log.i("StartFragment", "Menu Collapse");
+                Log.i("GridFragment", "Menu Collapse");
                 return true;  // Return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                Log.i("StartFragment", "Menu Expand");
+                Log.i("GridFragment", "Menu Expand");
 
                 // Clear the adapter
-                mViewModel.setImageDataTrigger(1);
+                mViewModel.setImageDataTrigger(SEARCH_WORD_STATUS);
                 return true;  // Return true to expand action view
             }
         });
@@ -219,8 +217,8 @@ public class StartFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    Log.i("StartFragment", "OnFocusChange with View: " + v);
-                    mViewModel.setImageDataTrigger(0);
+                    Log.i("GridFragment", "OnFocusChange with View: " + v);
+                    mViewModel.setImageDataTrigger(LIST_STATUS);
                     return;
                 }
             }
@@ -248,12 +246,12 @@ public class StartFragment extends Fragment {
                 queryWord = newWord;
 
                 if (queryWord.trim().equals("")) {
-                    Log.i("StartFragment", "onQueryTextChange and Clear image");
+                    Log.i("GridFragment", "onQueryTextChange and Clear image");
                     // if nothing in searchView, clear the adapter.
-                    mViewModel.setImageDataTrigger(1);
+                    mViewModel.setImageDataTrigger(SEARCH_WORD_STATUS);
                     return true;
                 } else {
-                    Log.i("StartFragment", "onQueryTextChange and set search image with " + queryWord);
+                    Log.i("GridFragment", "onQueryTextChange and set search image with " + queryWord);
                     mViewModel.setSearchTrigger(queryWord);
                 }
                 return true;
@@ -274,10 +272,6 @@ public class StartFragment extends Fragment {
 //    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                return true;
-
             case R.id.action_search:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
@@ -373,17 +367,17 @@ public class StartFragment extends Fragment {
 
 
     /**
-     * add_image_preview to the grid
+     * image_add_preview to the grid
      *
      * @param returnedPhotos
      */
     private void onPhotosReturned(List<File> returnedPhotos) {
         for (File file: returnedPhotos) {
-            AddImageFragment addImageFragment = new AddImageFragment();
-            addImageFragment.setImage(file.getAbsolutePath());
+            ImageAddFragment imageAddFragment = new ImageAddFragment();
+            imageAddFragment.setImage(file.getAbsolutePath());
             FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
             fragmentTransaction.hide(getFragment());
-            fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, addImageFragment, "Add Image").commit();
+            fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, imageAddFragment, "Add Image").commit();
         }
     }
 

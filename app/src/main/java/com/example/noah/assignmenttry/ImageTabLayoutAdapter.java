@@ -6,10 +6,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-public class ImageAddAdapter extends FragmentPagerAdapter {
+public class ImageTabLayoutAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragmentList;
 
-    public ImageAddAdapter(List<Fragment> fragmentList, FragmentManager fm) {
+    public ImageTabLayoutAdapter(List<Fragment> fragmentList, FragmentManager fm) {
         super(fm);
         this.fragmentList = fragmentList;
     }

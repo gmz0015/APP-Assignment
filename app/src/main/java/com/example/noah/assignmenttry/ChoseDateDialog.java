@@ -7,20 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 
-import com.google.android.gms.maps.MapView;
-
-import org.w3c.dom.CDATASection;
-
 import java.util.Calendar;
-import java.util.Date;
 
-public class ChoseDate extends DialogFragment {
+public class ChoseDateDialog extends DialogFragment {
 
     /* Instance Field */
     private CalendarView calendarView;
@@ -30,7 +24,7 @@ public class ChoseDate extends DialogFragment {
     private int currentYear;
     private Calendar date = Calendar.getInstance();
 
-    public ChoseDate() {}
+    public ChoseDateDialog() {}
 
     @Nullable
     @Override
@@ -87,7 +81,7 @@ public class ChoseDate extends DialogFragment {
     }
 
     /**
-     * The CallBack for "StartFragment"
+     * The CallBack for "GridFragment"
      * TODO Need to decide the exact words
      */
     // CallBack

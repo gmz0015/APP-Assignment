@@ -60,9 +60,10 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        // Create a new instance of MapsFragment and StartFragment
+        // Create a new instance of MapsFragment and GridFragment
         MapsFragment mapsFragment = new MapsFragment();
-        StartFragment startFragment = new StartFragment();
+        GridFragment gridFragment = new GridFragment();
+        ImageSearchFragment imageSearchFragment = new ImageSearchFragment();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -73,7 +74,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                         switch (menuItem.getItemId()) {
                             case R.id.nav_grid_view:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.baseContainer, startFragment.newInstance())
+                                        .replace(R.id.baseContainer, gridFragment.newInstance())
                                         .commitNow();
                                 break;
 
@@ -82,9 +83,15 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                                         .replace(R.id.baseContainer, mapsFragment.newInstance())
                                         .commitNow();
                                 break;
+
+                            case R.id.nav_search:
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.baseContainer, imageSearchFragment.newInstance())
+                                        .commitNow();
+                                break;
                             default:
 //                                getSupportFragmentManager().beginTransaction()
-//                                        .replace(R.id.container, StartFragment.newInstance())
+//                                        .replace(R.id.container, GridFragment.newInstance())
 //                                        .commitNow();
                         }
                         menuItem.setChecked(true);
@@ -106,7 +113,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         // Set default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.baseContainer, startFragment.newInstance())
+                    .replace(R.id.baseContainer, gridFragment.newInstance())
                     .commitNow();
         }
     }

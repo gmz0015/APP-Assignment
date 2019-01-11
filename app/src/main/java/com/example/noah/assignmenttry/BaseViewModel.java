@@ -39,6 +39,8 @@ public class BaseViewModel extends AndroidViewModel {
     }
 
 
+
+
     /**
      * This completely hides the implementation from the UI
      *
@@ -47,9 +49,7 @@ public class BaseViewModel extends AndroidViewModel {
     LiveData<List<ImageData>> getAllImages() { return mAllImage; }
 
 
-
     public LiveData<List<ImageData>> getImageDataLiveData(){ return imageDataLiveData; }
-
 
 
     public void setImageDataTrigger(int STATE) {
@@ -57,9 +57,11 @@ public class BaseViewModel extends AndroidViewModel {
         imageLiveDataTrigger.setValue(STATE);
     }
 
+
     public void setSearchTrigger(String word) {
         searchLiveDataTrigger.setValue(word);
     }
+
 
 
 
@@ -75,6 +77,24 @@ public class BaseViewModel extends AndroidViewModel {
 
 
 
+
+    /**
+     * Get the images by keywords in date, title and description
+     *
+     * Invoke by ImageSearchResultFragment
+     *
+     * @param date
+     * @param title
+     * @param description
+     * @return
+     */
+    public List<ImageData> searchImageByWordAll(String date, String title, String description) {
+        return myRepository.searchImageByWordAll(date, title, description);
+    }
+
+
+
+
     /**
      * Create a wrapper insert() method that calls the Repository's insert() method.
      * In this way, the implementation of insert() is completely hidden from the UI.
@@ -87,6 +107,12 @@ public class BaseViewModel extends AndroidViewModel {
 
     public void delete(ImageData imageData) { myRepository.delete(imageData); }
 
+
+
+
+    /**
+     * TODO Add comment
+     */
     class ImageLiveDataFilter extends MediatorLiveData<LiveData<List<ImageData>>> {
 
         public ImageLiveDataFilter(LiveData<Integer> imageTrigger, LiveData<String> word) {
@@ -96,9 +122,9 @@ public class BaseViewModel extends AndroidViewModel {
 
                     // Observe all images
                     setValue(myRepository.getAllImages());
-                } else {
+                } else if (state == 1) {
 
-                    // Observe searched image
+                    // Observe searched image by word in title
                     setValue(myRepository.getImageByWord(""));
                 }
             });

@@ -93,7 +93,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
                 // Create the instance of ImageData of the clicked image
                 ImageData current = mImages.get(position);
 
-                // Invoke the CallBack at StartFragment
+                // Invoke the CallBack at GridFragment
                 // TODO Need to be make sure whether is correct
                 if (mImageLongListener != null) {
                     mImageLongListener.onImageLongClick(current);
@@ -126,7 +126,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
                         current.getLatitide(),
                         current.getTime());
 
-                // Invoke the CallBack at StartFragment
+                // Invoke the CallBack at GridFragment
                 // TODO Need to be make sure whether is correct
                 if (mImageShortListener != null) {
                     mImageShortListener.onImageShortClick(imageDetailOverview);
@@ -140,7 +140,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     /**
      * Add images to adapter
      *
-     * Invoke at StartFragment
+     * Invoke at GridFragment
      *
      * @param image
      */
@@ -156,7 +156,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     /**
      * Clear all images in adapter For search
      *
-     * Invoke at StartFragment
+     * Invoke at GridFragment
      */
     void clearImages(){
         mImages = null;
@@ -191,7 +191,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
 
     /**
-     * The CallBack for "StartFragment"
+     * The CallBack for "GridFragment"
      * TODO Need to decide the exact words
      */
     // CallBack
@@ -209,7 +209,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
 
     /**
-     * The CallBack for "StartFragment"
+     * The CallBack for "GridFragment"
      * TODO Need to decide the exact words
      */
     // CallBack
