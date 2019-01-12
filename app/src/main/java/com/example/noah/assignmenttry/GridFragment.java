@@ -43,15 +43,20 @@ public class GridFragment extends Fragment {
     /* Instance Field */
     private BaseViewModel mViewModel;
     private FragmentManager mfragManager;
+    private FragmentTransaction fragmentTransaction;
     private ImageListAdapter myAdapter;
     private Activity mActivity;
 
     private final int LIST_STATUS = 0;
     private final int SEARCH_WORD_STATUS = 1;
 
+    public GridFragment() {}
+
     public static GridFragment newInstance() {
         return new GridFragment();
     }
+
+    public GridFragment getInstance() { return this; }
 
     @Override
     public void onAttach(Context context){
@@ -75,7 +80,7 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.grid_fragment, container, false);
+        return inflater.inflate(R.layout.base_grid_fragment, container, false);
     }
 
 
@@ -94,6 +99,7 @@ public class GridFragment extends Fragment {
         RecyclerView myrecyclerView = mActivity.findViewById(R.id.recyclerview);
         myrecyclerView.setAdapter(myAdapter);
         myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
+//        myrecyclerView.addItemDecoration(new RecyclerView.ItemDecoration(){});
 
 
         mViewModel.setImageDataTrigger(LIST_STATUS);
@@ -134,9 +140,8 @@ public class GridFragment extends Fragment {
         myAdapter.setOnImageShortClickListener(new ImageListAdapter.imageShortListener(){
             @Override
             public void onImageShortClick(ImageDetailOverview imageDetailOverview){
-                FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
-                fragmentTransaction.hide(getFragment());
-                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, imageDetailOverview, "Image Detail").commit();
+                mfragManager.beginTransaction().hide(getFragment())
+                        .addToBackStack("Start Fragment").add(R.id.baseContainer, imageDetailOverview, "Image Detail").commit();
             }
         });
 
@@ -312,9 +317,10 @@ public class GridFragment extends Fragment {
                 if (item == 0) {
 
                     // User click the Edit
-                    Toast.makeText(mActivity,
-                            "Edit",
-                            Toast.LENGTH_SHORT).show();
+                    ImageAddFragment imageAddFragment = new ImageAddFragment();
+                    imageAddFragment.setImage(imageData.getImagePath());
+                    mfragManager.beginTransaction().hide(getFragment())
+                            .addToBackStack("Start Fragment").add(R.id.baseContainer, imageAddFragment, "Edit Image").commit();
                 }
 
                 if (item == 1) {

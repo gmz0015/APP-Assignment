@@ -120,6 +120,8 @@ public class ImageAddInfoFragment extends Fragment implements OnMapReadyCallback
                 // result of the request.
             }
         }
+        Object a = 34.23;
+        ((Double) a).doubleValue();
 //             Create location services client
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 

@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -20,15 +22,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 public class BaseActivity extends AppCompatActivity implements ImageDetailOverview.OnImageDetailListener {
 
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 2987;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 7829;
     private DrawerLayout mDrawerLayout;
-    private static BaseActivity activity;
     private DisplayMetrics displayMetrics;
+
+    private static BaseActivity activity;
 
     @Override
     protected void onResume(){
@@ -45,7 +47,21 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         setContentView(R.layout.base_activity);
         checkPermissions(getApplicationContext());
 
+        // Create a new instance of MapsFragment and GridFragment
+        MapsFragment mapsFragment = new MapsFragment();
+        GridFragment gridFragment = new GridFragment();
+        SearchFragment searchFragment = new SearchFragment();
+
         activity = this;
+
+//        FragmentManager mFragmentManager = getSupportFragmentManager();
+//        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+//        mFragmentTransaction.add(R.id.baseContainer, gridFragment.getInstance());
+//        mFragmentTransaction.add(R.id.baseContainer, mapsFragment.getInstance());
+//        mFragmentTransaction.add(R.id.baseContainer, searchFragment.getInstance());
+//        mFragmentTransaction.hide(mapsFragment.getInstance());
+//        mFragmentTransaction.hide(searchFragment.getInstance());
+//        mFragmentTransaction.commit();
 
         // Set the toolbar as the app bar for the activity
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -60,16 +76,15 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        // Create a new instance of MapsFragment and GridFragment
-        MapsFragment mapsFragment = new MapsFragment();
-        GridFragment gridFragment = new GridFragment();
-        ImageSearchFragment imageSearchFragment = new ImageSearchFragment();
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
+
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                        Log.i("BaseActivity", "onNavigationItemSelected");
+
                         // set item as selected to persist highlight
                         switch (menuItem.getItemId()) {
                             case R.id.nav_grid_view:
@@ -86,7 +101,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
                             case R.id.nav_search:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.baseContainer, imageSearchFragment.newInstance())
+                                        .replace(R.id.baseContainer, searchFragment.newInstance())
                                         .commitNow();
                                 break;
                             default:
@@ -105,15 +120,11 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                     }
                 });
 
-        WindowManager manager = getWindowManager();
-        displayMetrics = new DisplayMetrics();
-        manager.getDefaultDisplay().getMetrics(displayMetrics);
-
 
         // Set default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.baseContainer, gridFragment.newInstance())
+                    .replace(R.id.baseContainer, gridFragment.getInstance())
                     .commitNow();
         }
     }

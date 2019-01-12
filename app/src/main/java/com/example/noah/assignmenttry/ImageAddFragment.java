@@ -117,7 +117,7 @@ public class ImageAddFragment extends Fragment {
                 if (TextUtils.isEmpty(descriptionText.getText())) {
                     Toast.makeText(
                             getContext(),
-                            R.string.empty_title_not_saved,
+                            R.string.empty_description_not_saved,
                             Toast.LENGTH_LONG).show();
                 }else if (TextUtils.isEmpty(dateText.getText())) {
                     Toast.makeText(

@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class ImageSearchFragment extends Fragment {
+public class SearchFragment extends Fragment {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
@@ -36,11 +36,13 @@ public class ImageSearchFragment extends Fragment {
 
     private final String[] titles = new String[]{"Info", "Result"};
 
-    public ImageSearchFragment() {}
+    public SearchFragment() {}
 
-    public static ImageSearchFragment newInstance() {
-        return new ImageSearchFragment();
+    public static SearchFragment newInstance() {
+        return new SearchFragment();
     }
+
+    public SearchFragment getInstance() { return this; }
 
     @Override
     public void onAttach(Context context){

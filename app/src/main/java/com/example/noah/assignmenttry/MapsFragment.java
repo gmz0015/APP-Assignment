@@ -60,6 +60,8 @@ public class MapsFragment extends Fragment
         return new MapsFragment();
     }
 
+    public MapsFragment getInstance() { return this; }
+
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -79,7 +81,7 @@ public class MapsFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Log.i("MapsFragment", "onCreateView()");
-        return inflater.inflate(R.layout.map_fragment, container, false);
+        return inflater.inflate(R.layout.base_map_fragment, container, false);
     }
 
     @Override

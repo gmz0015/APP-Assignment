@@ -95,9 +95,9 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         View view = inflater.inflate(R.layout.image_detail_info, null);
 
         // Set the handle of the title, description, time and mapVIew.
-        titleView = view.findViewById(R.id.title_detail);
+        titleView = view.findViewById(R.id.date_detail);
         desView = view.findViewById(R.id.description_detail);
-        timeView = view.findViewById(R.id.time_detail);
+        timeView = view.findViewById(R.id.title_detail);
         mMapView = (MapView) view.findViewById(R.id.mapView_detail);
 
         builder.setView(view).setNegativeButton("Back", null);
@@ -121,6 +121,8 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         if (latitude != 0) {
             mMapView.getMapAsync(this);
+        }else {
+            mMapView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -133,7 +135,6 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(appointLoc));
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-//        googleMap.setPadding(20,20,20,20); // Set unclickable
     }
 
     @Override
