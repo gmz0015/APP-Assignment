@@ -3,8 +3,10 @@ package com.example.noah.assignmenttry;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.example.noah.assignmenttry.database.ImageData;
 
 import java.util.List;
+
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImageViewHolder> {
 
@@ -68,11 +71,72 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
      */
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+        Log.i("imageListAdapter", "onBindViewHolder");
+        ImageData current = mImages.get(position);
+
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    Log.i("imageListAdapter", "asyncTask");
+                    BitmapFactory.Options opts = new BitmapFactory.Options();
+                    opts.inJustDecodeBounds = true;
+                    opts.inSampleSize = 4;
+                    Bitmap tempBitmap = BitmapFactory.decodeFile(current.getImagePath(), opts);
+                    ExifInterface exif = new ExifInterface(current.getImagePath());
+                    int rotate = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+                    int degree = 0;
+                    switch (rotate){
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            degree = 90;
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            degree = 180;
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            degree = 270;
+                            break;
+                    }
+
+                    Matrix matrix = new Matrix();
+                    matrix.setRotate(degree);
+                    opts.inJustDecodeBounds = false;
+                    tempBitmap = BitmapFactory.decodeFile(current.getImagePath(), opts);
+                    Bitmap newBM = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, false);
+                    return newBM;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object bitmap) {
+                super.onPostExecute(bitmap);
+                Log.i("imageListAdapter", "setImage");
+                holder.imageFile.setImageBitmap((Bitmap) bitmap);
+            }
+        };
+
+//        holder.imageFile.setTag(1,asyncTask);
+//        asyncTask.execute();
 
         if (mImages != null) {
-            ImageData current = mImages.get(position);
-            Bitmap tempBitmap = BitmapFactory.decodeFile(current.getImagePath());
-            holder.imageFile.setImageBitmap(tempBitmap);
+            holder.imageFile.setTag(R.id.ImageListAdapter,asyncTask);
+            asyncTask.execute();
+//            Bitmap tempBitmap = BitmapFactory.decodeFile(current.getImagePath());
+//            Log.i("ImageListAdapter", "Bitmap Width is: " + tempBitmap.getWidth());
+//            Log.i("ImageListAdapter", "Bitmap Height is: " + tempBitmap.getHeight());
+//
+//            if (tempBitmap.getWidth() > tempBitmap.getHeight()) {
+//                Matrix matrix = new Matrix();
+//                matrix.setRotate(90);
+//                Bitmap newBM = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, false);
+//                holder.imageFile.setImageBitmap(newBM);
+//            }else {
+//                holder.imageFile.setImageBitmap(tempBitmap);
+//            }
             holder.title.setText(current.getTitle());
         } else {
             // Covers the case of data not being ready yet.
@@ -137,6 +201,16 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
 
 
+
+    @Override
+    public void onViewRecycled(ImageViewHolder holder) {
+        super.onViewRecycled(holder);
+        AsyncTask asyncTask = (AsyncTask) holder.imageFile.getTag(R.id.ImageListAdapter);
+        asyncTask.cancel(true);
+    }
+
+
+
     /**
      * Add images to adapter
      *
@@ -146,29 +220,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
      */
     void setImages(List<ImageData> image) {
         mImages = image;
-//        mImages = images;
-//        mImagesBackup = mImages;
-        notifyDataSetChanged();
-    }
-
-
-
-    /**
-     * Clear all images in adapter For search
-     *
-     * Invoke at GridFragment
-     */
-    void clearImages(){
-        mImages = null;
-        notifyDataSetChanged();
-    }
-
-
-    /**
-     * Restore the previous images before click the search view
-     */
-    void restoreImages(){
-        mImages = mImagesBackup;
         notifyDataSetChanged();
     }
 

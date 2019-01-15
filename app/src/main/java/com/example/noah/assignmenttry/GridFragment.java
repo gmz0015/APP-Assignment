@@ -43,7 +43,6 @@ public class GridFragment extends Fragment {
     /* Instance Field */
     private BaseViewModel mViewModel;
     private FragmentManager mfragManager;
-    private FragmentTransaction fragmentTransaction;
     private ImageListAdapter myAdapter;
     private Activity mActivity;
 
@@ -67,6 +66,8 @@ public class GridFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initEasyImage();
 
         // get the handle of parent fragment
         mfragManager = getFragmentManager();
@@ -99,7 +100,6 @@ public class GridFragment extends Fragment {
         RecyclerView myrecyclerView = mActivity.findViewById(R.id.recyclerview);
         myrecyclerView.setAdapter(myAdapter);
         myrecyclerView.setLayoutManager(new GridLayoutManager(mActivity.getApplicationContext(), numberOfColumns));
-//        myrecyclerView.addItemDecoration(new RecyclerView.ItemDecoration(){});
 
 
         mViewModel.setImageDataTrigger(LIST_STATUS);
@@ -228,6 +228,13 @@ public class GridFragment extends Fragment {
                 }
             }
         });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.i("SearchView", "OnCLose");
+                return false;
+            }
+        });
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -241,6 +248,7 @@ public class GridFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newWord) {
+                Log.i("onQueryTextChange", "Detached is: " + isDetached());
 
                 // To avoid the double search of the same content
                 if (newWord.equals(queryWord)) {
@@ -277,9 +285,13 @@ public class GridFragment extends Fragment {
 //    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_search:
+            case R.id.action_settings:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
+                AboutFragment aboutFragment = new AboutFragment();
+                FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
+                fragmentTransaction.hide(getFragment());
+                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, aboutFragment, "Add Image").commit();
                 return true;
 
             case android.R.id.home:
@@ -295,6 +307,19 @@ public class GridFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+
+
+    private void initEasyImage() {
+        EasyImage.configuration(getActivity())
+        .setImagesFolderName("EasyImage sample")
+                // it adds new pictures to the gallery 
+                .setCopyTakenPhotosToPublicGalleryAppFolder(true)
+                // probably unnecessary
+                .setCopyPickedImagesToPublicGalleryAppFolder(false)
+        // it allows to select multiple pictures in the gallery 
+        .setAllowMultiplePickInGallery(true);
     }
 
 

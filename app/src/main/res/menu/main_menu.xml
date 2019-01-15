@@ -17,6 +17,6 @@
     <item android:id="@+id/action_settings"
         android:title="@string/setting"
         app:showAsAction="never"
-        tools:listitem="@layout/list_settings"/>
+        tools:listitem="@layout/about"/>
 
 </menu>

@@ -145,6 +145,7 @@ public class ImageAddFragment extends Fragment {
                             imageAddInfoFragment.getCurrentDate());
 
                     mViewModel.insert(image);
+                    getFragmentManager().popBackStack();
                 }else {
                     String title = titleText.getText().toString();
                     String description = descriptionText.getText().toString();
@@ -156,9 +157,8 @@ public class ImageAddFragment extends Fragment {
                             imageAddInfoFragment.getCurrentDate());
 
                     mViewModel.insert(image);
+                    getFragmentManager().popBackStack();
                 }
-
-                getFragmentManager().popBackStack();
             }
         });
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
@@ -166,9 +166,6 @@ public class ImageAddFragment extends Fragment {
 
     @Override
     public void onDestroy(){
-//        Log.i("ImageAddFragment", "onDestroy()");
-//        imageAddPreviewFragment.onDestroy();
-//        imageAddInfoFragment.onDestroy();
         super.onDestroy();
     }
 

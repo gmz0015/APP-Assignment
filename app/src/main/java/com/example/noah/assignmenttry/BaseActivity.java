@@ -9,15 +9,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +25,6 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 2987;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 7829;
     private DrawerLayout mDrawerLayout;
-    private DisplayMetrics displayMetrics;
 
     private static BaseActivity activity;
 
@@ -53,15 +49,6 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         SearchFragment searchFragment = new SearchFragment();
 
         activity = this;
-
-//        FragmentManager mFragmentManager = getSupportFragmentManager();
-//        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-//        mFragmentTransaction.add(R.id.baseContainer, gridFragment.getInstance());
-//        mFragmentTransaction.add(R.id.baseContainer, mapsFragment.getInstance());
-//        mFragmentTransaction.add(R.id.baseContainer, searchFragment.getInstance());
-//        mFragmentTransaction.hide(mapsFragment.getInstance());
-//        mFragmentTransaction.hide(searchFragment.getInstance());
-//        mFragmentTransaction.commit();
 
         // Set the toolbar as the app bar for the activity
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
