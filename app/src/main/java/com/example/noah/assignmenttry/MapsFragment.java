@@ -1,5 +1,6 @@
 package com.example.noah.assignmenttry;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
@@ -10,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -61,9 +63,9 @@ public class MapsFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = (Activity)context;
+        mActivity = (Activity) context;
     }
 
     @Override
@@ -72,6 +74,7 @@ public class MapsFragment extends Fragment
         Log.i("MapsFragment", "onCreate()");
         mfragManager = getFragmentManager();
         setHasOptionsMenu(true);
+        checkPermission();
     }
 
     @Nullable
@@ -79,7 +82,7 @@ public class MapsFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Log.i("MapsFragment", "onCreateView()");
-        return inflater.inflate(R.layout.map_fragment, container, false);
+        return inflater.inflate(R.layout.base_map_fragment, container, false);
     }
 
     @Override
@@ -91,12 +94,11 @@ public class MapsFragment extends Fragment
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
             Log.i("(MapsFragment)", "mapFragment is not null");
-        }else {
+        } else {
             Log.i("(MapsFragment)", "mapFragment is null");
         }
 
         mViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-//        myAdapter = new ImageListAdapter(getActivity().getApplicationContext(), new);
 
         mViewModel.getAllImages().observe(this, new Observer<List<ImageData>>() {
             @Override
@@ -104,15 +106,16 @@ public class MapsFragment extends Fragment
                 // Update the cached copy of the words in the adapter.
                 Log.i("MapsFragment", "Observer onChanged()");
 //                myAdapter.setImages(images);
-                for (ImageData imageData: images){
-                    Double mLon = imageData.getLongitude();
-                    Double mLat = imageData.getLatitide();
-                    String mLastUpdateTime = imageData.getTime();
-                    Log.i("MAP (ImageListAdapter)", "new location " + mLon.toString() + mLat.toString());
-                    MapsFragment.getMap().addMarker(new MarkerOptions().position(new
+                for (ImageData imageData : images) {
+                    if (imageData.getLongitude() != null) {
+                        Double mLon = imageData.getLongitude();
+                        Double mLat = imageData.getLatitide();
+                        String mLastUpdateTime = imageData.getTime();
+                        MapsFragment.getMap().addMarker(new MarkerOptions().position(new
                                 LatLng(mLat, mLon))
                                 .title(imageData.getTitle()));
-                    MapsFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10));
+                        MapsFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 14));
+                    }
                 }
             }
         });
@@ -137,6 +140,7 @@ public class MapsFragment extends Fragment
         // Set the home icon is menu
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        actionbar.setTitle("My Map");
 
         // Set the search view
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -151,13 +155,13 @@ public class MapsFragment extends Fragment
             // Define the listener
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                Log.i("StartFragment", "Menu Collapse");
+                Log.i("GridFragment", "Menu Collapse");
                 return true;  // Return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                Log.i("StartFragment", "Menu Expand");
+                Log.i("GridFragment", "Menu Expand");
                 return true;  // Return true to expand action view
             }
         });
@@ -172,7 +176,7 @@ public class MapsFragment extends Fragment
                     // then reset the zoom level.
 
                     // Reset the zoom level to 10
-                    mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
                 }
             }
         });
@@ -199,13 +203,13 @@ public class MapsFragment extends Fragment
                 queryWord = newWord;
 
                 if (queryWord.trim().equals("")) {
-                    Log.i("StartFragment", "onQueryTextChange and Clear image");
+                    Log.i("GridFragment", "onQueryTextChange and Clear image");
 
                     // if nothing in searchView, Reset the zoom level to 10.
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
                     return true;
                 } else {
-                    Log.i("StartFragment", "onQueryTextChange and set search image with " + queryWord);
+                    Log.i("GridFragment", "onQueryTextChange and set search image with " + queryWord);
 
                     ImageData current = mViewModel.getImageByTitle(queryWord);
                     if (current != null) {
@@ -222,8 +226,6 @@ public class MapsFragment extends Fragment
     }
 
 
-
-
     /**
      * Check to see which action the user selected.
      * If the method does not recognize the user's action, it invokes the superclass method
@@ -236,12 +238,11 @@ public class MapsFragment extends Fragment
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
+                AboutFragment aboutFragment = new AboutFragment();
+                FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
+                fragmentTransaction.hide(getFragment());
+                fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, aboutFragment, "Add Image").commit();
                 return true;
-
-//            case R.id.action_favorite:
-//                // User chose the "Favorite" action, mark the current item
-//                // as a favorite...
-//                return true;
 
             case android.R.id.home:
                 DrawerLayout mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
@@ -262,7 +263,31 @@ public class MapsFragment extends Fragment
         Log.i("MapsFragment", "onResume()");
     }
 
-    @SuppressLint("MissingPermission")
+    public void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        ACCESS_FINE_LOCATION);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -287,20 +312,31 @@ public class MapsFragment extends Fragment
         }
     }
 
-//    private List<ImageData> imageDataList;
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
         mMap = googleMap;
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         mMap.setOnMarkerClickListener(this);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(AUSTRALIA.getCenter(), 10));
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }else {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ACCESS_FINE_LOCATION);
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -335,7 +371,7 @@ public class MapsFragment extends Fragment
                 current.getTime());
         FragmentTransaction fragmentTransaction = mfragManager.beginTransaction();
         fragmentTransaction.hide(getFragment());
-        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.container, imageDetailOverview, "Image Detail").commit();
+        fragmentTransaction.addToBackStack("Maps Fragment").add(R.id.baseContainer, imageDetailOverview, "Image Detail").commit();
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the

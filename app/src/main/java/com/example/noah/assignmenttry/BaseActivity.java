@@ -15,20 +15,18 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 public class BaseActivity extends AppCompatActivity implements ImageDetailOverview.OnImageDetailListener {
 
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 2987;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 7829;
     private DrawerLayout mDrawerLayout;
+
     private static BaseActivity activity;
-    private DisplayMetrics displayMetrics;
 
     @Override
     protected void onResume(){
@@ -45,6 +43,11 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         setContentView(R.layout.base_activity);
         checkPermissions(getApplicationContext());
 
+        // Create a new instance of MapsFragment and GridFragment
+        MapsFragment mapsFragment = new MapsFragment();
+        GridFragment gridFragment = new GridFragment();
+        SearchFragment searchFragment = new SearchFragment();
+
         activity = this;
 
         // Set the toolbar as the app bar for the activity
@@ -60,31 +63,37 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        // Create a new instance of MapsFragment and StartFragment
-        MapsFragment mapsFragment = new MapsFragment();
-        StartFragment startFragment = new StartFragment();
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
+
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                        Log.i("BaseActivity", "onNavigationItemSelected");
+
                         // set item as selected to persist highlight
                         switch (menuItem.getItemId()) {
                             case R.id.nav_grid_view:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.container, startFragment.newInstance())
+                                        .replace(R.id.baseContainer, gridFragment.newInstance())
                                         .commitNow();
                                 break;
 
                             case R.id.nav_map_view:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.container, mapsFragment.newInstance())
+                                        .replace(R.id.baseContainer, mapsFragment.newInstance())
+                                        .commitNow();
+                                break;
+
+                            case R.id.nav_search:
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.baseContainer, searchFragment.newInstance())
                                         .commitNow();
                                 break;
                             default:
 //                                getSupportFragmentManager().beginTransaction()
-//                                        .replace(R.id.container, StartFragment.newInstance())
+//                                        .replace(R.id.container, GridFragment.newInstance())
 //                                        .commitNow();
                         }
                         menuItem.setChecked(true);
@@ -98,15 +107,11 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
                     }
                 });
 
-        WindowManager manager = getWindowManager();
-        displayMetrics = new DisplayMetrics();
-        manager.getDefaultDisplay().getMetrics(displayMetrics);
-
 
         // Set default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, startFragment.newInstance())
+                    .replace(R.id.baseContainer, gridFragment.getInstance())
                     .commitNow();
         }
     }
@@ -119,7 +124,7 @@ public class BaseActivity extends AppCompatActivity implements ImageDetailOvervi
         args.putString("Title", title);
         args.putString("Description", description);
         imageDetailOverview.setArguments(args);
-        getSupportFragmentManager().beginTransaction().addToBackStack(null).add(R.id.container, imageDetailOverview).commit();
+        getSupportFragmentManager().beginTransaction().addToBackStack(null).add(R.id.baseContainer, imageDetailOverview).commit();
 
     }
 

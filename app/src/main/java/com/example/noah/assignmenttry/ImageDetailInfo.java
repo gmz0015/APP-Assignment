@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,11 +54,15 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         Bundle bundle = new Bundle();
         bundle.putString("Title", title);
         bundle.putString("Description", description);
-        bundle.putDouble("Longitude", longitude);
-        bundle.putDouble("Latitude", latitude);
         bundle.putString("Time", time);
         imageDeatilInfo.setArguments(bundle);
-
+        if (longitude != null){
+            bundle.putDouble("Longitude", longitude);
+            bundle.putDouble("Latitude", latitude);
+        }else {
+            bundle.putDouble("Longitude", 0);
+            bundle.putDouble("Latitude", 0);
+        }
         return imageDeatilInfo;
     }
 
@@ -94,10 +97,8 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         // Set the handle of the title, description, time and mapVIew.
         titleView = view.findViewById(R.id.title_detail);
         desView = view.findViewById(R.id.description_detail);
-        timeView = view.findViewById(R.id.time_detail);
+        timeView = view.findViewById(R.id.date_detail);
         mMapView = (MapView) view.findViewById(R.id.mapView_detail);
-
-        mMapView.getMapAsync(this);
 
         builder.setView(view).setNegativeButton("Back", null);
         return builder.create();
@@ -118,6 +119,11 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
 
         mMapView.onCreate(mapViewBundle);
 
+        if (latitude != 0) {
+            mMapView.getMapAsync(this);
+        }else {
+            mMapView.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -129,7 +135,6 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(appointLoc));
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-//        googleMap.setPadding(20,20,20,20); // Set unclickable
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import java.io.IOException;
 
 public class ImageDetailOverview extends Fragment{
     OnImageDetailListener mCallback;
@@ -85,15 +88,16 @@ public class ImageDetailOverview extends Fragment{
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.e("ImageDetailOverview", "onCreateOptionsMenu()");
+        Log.i("ImageDetailOverview", "onCreateOptionsMenu()");
         // Get a support ActionBar corresponding to this toolbar
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+        actionbar.setTitle("Photo Info");
 
         // Enable the Up button
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
         menu.clear();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.child_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -121,43 +125,32 @@ public class ImageDetailOverview extends Fragment{
 
         ImageView imageView = mActivity.findViewById(R.id.image_detail);
 
-        // Get the dimensions of the View
-//        int targetW = imageView.getWidth();
-//        int targetH = imageView.getHeight();
-//        Log.i("ImageDetailOverview", "imageView width is: " + targetW + " height is: " + targetH);
 
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile()
-        BitmapFactory.decodeFile(imagePath);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-//        Log.i("ImageDetailOverview", "photo width is: " + photoW + " height is: " + photoH);
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(imagePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int rotate = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+        int degree = 0;
+        switch (rotate){
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                degree = 90;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                degree = 180;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                degree = 270;
+                break;
+        }
 
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/384, photoH/525);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-//        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-
-
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         Matrix matrix = new Matrix();
-        matrix.postScale(0.8f, 0.9f);//设置宽高放大比例（这里为等比例放大）
-//        Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-//                bitmap.getHeight(), matrix, true);//对现有bitmap进行放大
-        imageView.setImageBitmap(bitmap);
-//        Log.i("ImageDetailOverview", "original photo width is: " + bitmap.getWidth() + " height is: " + bitmap.getHeight());
-
-//        int targetW = ;
-//        int targetH = imageView.getHeight();
-//        Log.i("ImageDetailOverview", "imageView width is: " + targetW + " height is: " + targetH);
+        matrix.setRotate(degree);
+        Bitmap tempBitmap = BitmapFactory.decodeFile(imagePath);
+        Bitmap newBM = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, false);
+        imageView.setImageBitmap(newBM);
 
 
         FloatingActionButton fab_info = mActivity.findViewById(R.id.fab_info);

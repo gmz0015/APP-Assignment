@@ -9,22 +9,20 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 
 import com.example.noah.assignmenttry.database.ImageData;
-import com.example.noah.assignmenttry.database.StartRepository;
+import com.example.noah.assignmenttry.database.BaseRepository;
 
 import java.util.List;
 
 public class BaseViewModel extends AndroidViewModel {
-//    private LiveData<List<ImageData>> mImageByWord;// TODO Waiting to delete
     private LiveData<List<ImageData>> mAllImage;
-    private StartRepository myRepository;
-//    private LiveData<List<ImageData>> mImage;// TODO Waiting to delete
+    private BaseRepository myRepository;
     private final MutableLiveData<Integer> imageLiveDataTrigger;
     private final MutableLiveData<String> searchLiveDataTrigger;
     public final LiveData<List<ImageData>> imageDataLiveData;
 
     public BaseViewModel(@NonNull Application application) {
         super(application);
-        myRepository = new StartRepository(application);
+        myRepository = new BaseRepository(application);
 
 
         mAllImage = myRepository.getAllImages();
@@ -41,6 +39,8 @@ public class BaseViewModel extends AndroidViewModel {
     }
 
 
+
+
     /**
      * This completely hides the implementation from the UI
      *
@@ -49,21 +49,7 @@ public class BaseViewModel extends AndroidViewModel {
     LiveData<List<ImageData>> getAllImages() { return mAllImage; }
 
 
-
-    // TODO Waiting to Delete
-    /**
-     * Get the images containing the word in title
-     *
-     * @param
-     * @return
-     */
-//    LiveData<List<ImageData>>  getImageByWord(String word) {
-//        mImageByWord = myRepository.getImageByWord(word);
-//        return mImageByWord;
-//    }
-
     public LiveData<List<ImageData>> getImageDataLiveData(){ return imageDataLiveData; }
-
 
 
     public void setImageDataTrigger(int STATE) {
@@ -71,9 +57,11 @@ public class BaseViewModel extends AndroidViewModel {
         imageLiveDataTrigger.setValue(STATE);
     }
 
+
     public void setSearchTrigger(String word) {
         searchLiveDataTrigger.setValue(word);
     }
+
 
 
 
@@ -89,6 +77,24 @@ public class BaseViewModel extends AndroidViewModel {
 
 
 
+
+    /**
+     * Get the images by keywords in date, title and description
+     *
+     * Invoke by ImageSearchResultFragment
+     *
+     * @param date
+     * @param title
+     * @param description
+     * @return
+     */
+    public List<ImageData> searchImageByWordAll(String date, String title, String description) {
+        return myRepository.searchImageByWordAll(date, title, description);
+    }
+
+
+
+
     /**
      * Create a wrapper insert() method that calls the Repository's insert() method.
      * In this way, the implementation of insert() is completely hidden from the UI.
@@ -101,6 +107,12 @@ public class BaseViewModel extends AndroidViewModel {
 
     public void delete(ImageData imageData) { myRepository.delete(imageData); }
 
+
+
+
+    /**
+     * TODO Add comment
+     */
     class ImageLiveDataFilter extends MediatorLiveData<LiveData<List<ImageData>>> {
 
         public ImageLiveDataFilter(LiveData<Integer> imageTrigger, LiveData<String> word) {
@@ -110,9 +122,9 @@ public class BaseViewModel extends AndroidViewModel {
 
                     // Observe all images
                     setValue(myRepository.getAllImages());
-                } else {
+                } else if (state == 1) {
 
-                    // Observe searched image
+                    // Observe searched image by word in title
                     setValue(myRepository.getImageByWord(""));
                 }
             });
