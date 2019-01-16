@@ -16,6 +16,9 @@ import java.util.List;
 /**
  * This is the ViewModel.
  *
+ * Using for get all image
+ * Using for get the image by its title
+ * Using for search image by the keywords in date, title and description
  */
 public class BaseViewModel extends AndroidViewModel {
     private LiveData<List<ImageData>> mAllImage;
