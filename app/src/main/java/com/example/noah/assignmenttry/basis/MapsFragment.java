@@ -1,7 +1,6 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.basis;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -30,6 +29,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.noah.assignmenttry.AboutFragment;
+import com.example.noah.assignmenttry.detail.ImageDetailOverview;
+import com.example.noah.assignmenttry.R;
 import com.example.noah.assignmenttry.database.ImageData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;

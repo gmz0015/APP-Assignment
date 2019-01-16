@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.noah.assignmenttry.BaseActivity"
+    tools:context="com.example.noah.assignmenttry.basis.BaseActivity"
     tools:showIn="@layout/base_grid_fragment">
 
     <android.support.v7.widget.RecyclerView

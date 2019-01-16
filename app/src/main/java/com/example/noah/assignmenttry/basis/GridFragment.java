@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.basis;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -31,6 +31,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.noah.assignmenttry.AboutFragment;
+import com.example.noah.assignmenttry.add.ImageAddFragment;
+import com.example.noah.assignmenttry.detail.ImageDetailOverview;
+import com.example.noah.assignmenttry.R;
 import com.example.noah.assignmenttry.database.ImageData;
 
 import java.io.File;

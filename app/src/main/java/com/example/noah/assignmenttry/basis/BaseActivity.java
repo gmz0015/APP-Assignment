@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.basis;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -20,6 +20,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.noah.assignmenttry.detail.ImageDetailOverview;
+import com.example.noah.assignmenttry.R;
+
+/**
+ * This the basic activity. Invoke the grid fragment, map fragment and search fragment
+ */
 public class BaseActivity extends AppCompatActivity implements ImageDetailOverview.OnImageDetailListener {
 
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 2987;

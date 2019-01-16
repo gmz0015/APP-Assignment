@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.add;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,8 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.noah.assignmenttry.R;
+
 import java.io.IOException;
 
+/**
+ * This is the preview fragment to inflate the preview page at adding photo
+ */
 public class ImageAddPreviewFragment extends Fragment {
     private ImageView imageView;
     private String imagePath;

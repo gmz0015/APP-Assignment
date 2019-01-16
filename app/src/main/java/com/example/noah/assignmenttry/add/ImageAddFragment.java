@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.add;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -23,11 +23,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.noah.assignmenttry.ImageTabLayoutAdapter;
+import com.example.noah.assignmenttry.R;
+import com.example.noah.assignmenttry.basis.BaseViewModel;
 import com.example.noah.assignmenttry.database.ImageData;
 
 import java.util.ArrayList;
 
-
+/**
+ * The fragment for adding image
+ *
+ * This is an overview fragment. It contains ImageAddInfoFragment and ImageAddPreviewFragment
+ */
 public class ImageAddFragment extends Fragment {
 
     private TabLayout mTabLayout;
