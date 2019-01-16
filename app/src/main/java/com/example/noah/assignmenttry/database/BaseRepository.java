@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class StartRepository {
+public class BaseRepository {
     private final MyDAO myDAO;
     private LiveData<List<ImageData>> myAllImage;
     private LiveData<List<ImageData>> mImageByWord;
 
-    public StartRepository(Application application) {
+    public BaseRepository(Application application) {
         MyDatabase db = MyDatabase.getDatabase(application);
         myDAO = db.myDao();
         myAllImage = myDAO.getAllImages();

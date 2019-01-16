@@ -119,6 +119,17 @@ public class ImageAddFragment extends Fragment {
                             getContext(),
                             R.string.empty_description_not_saved,
                             Toast.LENGTH_LONG).show();
+                    String title = titleText.getText().toString();
+                    String description = "add a description!";
+                    ImageData image = new ImageData(imagePath,
+                            title,
+                            description,
+                            imageAddInfoFragment.getCurrentLongitude(),
+                            imageAddInfoFragment.getCurrentLatitude(),
+                            imageAddInfoFragment.getCurrentDate());
+
+                    mViewModel.insert(image);
+                    getFragmentManager().popBackStack(null, 0);
                 }else if (TextUtils.isEmpty(dateText.getText())) {
                     Toast.makeText(
                             getContext(),
@@ -145,7 +156,7 @@ public class ImageAddFragment extends Fragment {
                             imageAddInfoFragment.getCurrentDate());
 
                     mViewModel.insert(image);
-                    getFragmentManager().popBackStack();
+                    getFragmentManager().popBackStack(null, 0);
                 }else {
                     String title = titleText.getText().toString();
                     String description = descriptionText.getText().toString();
@@ -157,7 +168,7 @@ public class ImageAddFragment extends Fragment {
                             imageAddInfoFragment.getCurrentDate());
 
                     mViewModel.insert(image);
-                    getFragmentManager().popBackStack();
+                    getFragmentManager().popBackStack(null, 0);
                 }
             }
         });

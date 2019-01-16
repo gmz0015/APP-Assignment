@@ -95,9 +95,9 @@ public class ImageDetailInfo extends DialogFragment implements OnMapReadyCallbac
         View view = inflater.inflate(R.layout.image_detail_info, null);
 
         // Set the handle of the title, description, time and mapVIew.
-        titleView = view.findViewById(R.id.date_detail);
+        titleView = view.findViewById(R.id.title_detail);
         desView = view.findViewById(R.id.description_detail);
-        timeView = view.findViewById(R.id.title_detail);
+        timeView = view.findViewById(R.id.date_detail);
         mMapView = (MapView) view.findViewById(R.id.mapView_detail);
 
         builder.setView(view).setNegativeButton("Back", null);

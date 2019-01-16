@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -121,8 +122,8 @@ public class GridFragment extends Fragment {
             }
         });
 
-
-
+        boolean hasCamera = hasCameraSupport();
+        Log.i("GridFragment", "hasCamera: " + hasCamera);
         // Set FloatingActionButton for access to gallery
         FloatingActionButton fab_camera = getActivity().findViewById(R.id.fab_camera);
 
@@ -130,6 +131,7 @@ public class GridFragment extends Fragment {
         fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 EasyImage.openCamera(GridFragment.this, 0); // Important
             }
         });
@@ -190,6 +192,7 @@ public class GridFragment extends Fragment {
         // Set the home icon is menu
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        actionbar.setTitle("My Photo");
 
         // Set the search view
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -313,13 +316,13 @@ public class GridFragment extends Fragment {
 
     private void initEasyImage() {
         EasyImage.configuration(getActivity())
-        .setImagesFolderName("EasyImage sample")
+                .setImagesFolderName("My App Photos")
                 // it adds new pictures to the gallery 
                 .setCopyTakenPhotosToPublicGalleryAppFolder(true)
                 // probably unnecessary
                 .setCopyPickedImagesToPublicGalleryAppFolder(false)
-        // it allows to select multiple pictures in the gallery 
-        .setAllowMultiplePickInGallery(true);
+                // it allows to select multiple pictures in the gallery 
+                .setAllowMultiplePickInGallery(false);
     }
 
 
@@ -410,6 +413,15 @@ public class GridFragment extends Fragment {
             fragmentTransaction.hide(getFragment());
             fragmentTransaction.addToBackStack("Start Fragment").add(R.id.baseContainer, imageAddFragment, "Add Image").commit();
         }
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    private boolean hasCameraSupport() {
+        return getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
 

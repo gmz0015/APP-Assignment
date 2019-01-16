@@ -91,6 +91,7 @@ public class ImageDetailOverview extends Fragment{
         Log.i("ImageDetailOverview", "onCreateOptionsMenu()");
         // Get a support ActionBar corresponding to this toolbar
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
+        actionbar.setTitle("Photo Info");
 
         // Enable the Up button
         actionbar.setDisplayHomeAsUpEnabled(true);

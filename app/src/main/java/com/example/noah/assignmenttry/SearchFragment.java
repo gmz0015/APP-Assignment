@@ -122,6 +122,7 @@ public class SearchFragment extends Fragment {
         // Set the home icon is menu
         ActionBar actionbar = ((AppCompatActivity) mActivity).getSupportActionBar();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        actionbar.setTitle("My Search");
     }
 
 

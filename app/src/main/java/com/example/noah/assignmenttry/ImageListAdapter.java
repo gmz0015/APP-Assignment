@@ -1,6 +1,7 @@
 package com.example.noah.assignmenttry;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -125,18 +126,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
         if (mImages != null) {
             holder.imageFile.setTag(R.id.ImageListAdapter,asyncTask);
             asyncTask.execute();
-//            Bitmap tempBitmap = BitmapFactory.decodeFile(current.getImagePath());
-//            Log.i("ImageListAdapter", "Bitmap Width is: " + tempBitmap.getWidth());
-//            Log.i("ImageListAdapter", "Bitmap Height is: " + tempBitmap.getHeight());
-//
-//            if (tempBitmap.getWidth() > tempBitmap.getHeight()) {
-//                Matrix matrix = new Matrix();
-//                matrix.setRotate(90);
-//                Bitmap newBM = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, false);
-//                holder.imageFile.setImageBitmap(newBM);
-//            }else {
-//                holder.imageFile.setImageBitmap(tempBitmap);
-//            }
             holder.title.setText(current.getTitle());
         } else {
             // Covers the case of data not being ready yet.
@@ -237,6 +226,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
             return mImages.size();
         else return 0;
     }
+
 
 
 

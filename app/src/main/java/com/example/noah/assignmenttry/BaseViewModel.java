@@ -9,20 +9,20 @@ import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 
 import com.example.noah.assignmenttry.database.ImageData;
-import com.example.noah.assignmenttry.database.StartRepository;
+import com.example.noah.assignmenttry.database.BaseRepository;
 
 import java.util.List;
 
 public class BaseViewModel extends AndroidViewModel {
     private LiveData<List<ImageData>> mAllImage;
-    private StartRepository myRepository;
+    private BaseRepository myRepository;
     private final MutableLiveData<Integer> imageLiveDataTrigger;
     private final MutableLiveData<String> searchLiveDataTrigger;
     public final LiveData<List<ImageData>> imageDataLiveData;
 
     public BaseViewModel(@NonNull Application application) {
         super(application);
-        myRepository = new StartRepository(application);
+        myRepository = new BaseRepository(application);
 
 
         mAllImage = myRepository.getAllImages();
