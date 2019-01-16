@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.basis;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -13,6 +13,10 @@ import com.example.noah.assignmenttry.database.BaseRepository;
 
 import java.util.List;
 
+/**
+ * This is the ViewModel.
+ *
+ */
 public class BaseViewModel extends AndroidViewModel {
     private LiveData<List<ImageData>> mAllImage;
     private BaseRepository myRepository;

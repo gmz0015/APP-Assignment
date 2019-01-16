@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.basis;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +20,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.noah.assignmenttry.search.ImageSearchInfoFragment;
+import com.example.noah.assignmenttry.search.ImageSearchResultFragment;
+import com.example.noah.assignmenttry.ImageTabLayoutAdapter;
+import com.example.noah.assignmenttry.R;
 
 import java.util.ArrayList;
 

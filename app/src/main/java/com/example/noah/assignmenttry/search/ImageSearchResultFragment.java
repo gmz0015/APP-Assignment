@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.search;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -17,10 +17,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.noah.assignmenttry.R;
+import com.example.noah.assignmenttry.basis.BaseViewModel;
+import com.example.noah.assignmenttry.basis.GridFragment;
+import com.example.noah.assignmenttry.basis.ImageListAdapter;
 import com.example.noah.assignmenttry.database.ImageData;
+import com.example.noah.assignmenttry.detail.ImageDetailOverview;
 
 import java.util.ArrayList;
 import java.util.List;

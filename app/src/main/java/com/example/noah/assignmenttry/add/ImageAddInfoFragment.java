@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.add;
 
 import android.Manifest;
 import android.app.Activity;
@@ -19,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.TextView;
 
+import com.example.noah.assignmenttry.ChoseDateDialog;
+import com.example.noah.assignmenttry.R;
+import com.example.noah.assignmenttry.basis.BaseViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +32,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+/**
+ * This is the info fragment to inflate the info page at adding photo
+ */
 public class ImageAddInfoFragment extends Fragment implements OnMapReadyCallback {
 
     /* Instance Field */

@@ -1,7 +1,6 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.basis;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -16,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.noah.assignmenttry.detail.ImageDetailOverview;
+import com.example.noah.assignmenttry.R;
 import com.example.noah.assignmenttry.database.ImageData;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     // Store the mImages to be used when canceled the search view.
     private List<ImageData> mImagesBackup;
 
-    ImageListAdapter(Context context) {
+    public ImageListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         this.context = context;
     }
@@ -207,7 +208,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
      *
      * @param image
      */
-    void setImages(List<ImageData> image) {
+    public void setImages(List<ImageData> image) {
         mImages = image;
         notifyDataSetChanged();
     }

@@ -1,4 +1,4 @@
-package com.example.noah.assignmenttry;
+package com.example.noah.assignmenttry.detail;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.example.noah.assignmenttry.R;
+import com.example.noah.assignmenttry.detail.ImageDetailInfo;
 
 import java.io.IOException;
 
